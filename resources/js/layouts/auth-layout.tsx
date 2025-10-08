@@ -1,3 +1,4 @@
+import { AppToaster } from '@/components/app-toaster';
 import AuthLayoutTemplate from '@/layouts/auth/auth-simple-layout';
 
 export default function AuthLayout({
@@ -11,8 +12,15 @@ export default function AuthLayout({
     description: string;
 }) {
     return (
-        <AuthLayoutTemplate title={title} description={description} {...props}>
-            {children}
-        </AuthLayoutTemplate>
+        <>
+            <AuthLayoutTemplate
+                title={title}
+                description={description}
+                {...props}
+            >
+                {children}
+            </AuthLayoutTemplate>
+            <AppToaster />
+        </>
     );
 }
