@@ -1,3 +1,4 @@
+import AdminUserController from '@/actions/App/Http/Controllers/Admin/UserController';
 import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
@@ -11,9 +12,9 @@ import {
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
-import { type NavItem } from '@/types';
-import { Link } from '@inertiajs/react';
-import { BookOpen, Folder, LayoutGrid } from 'lucide-react';
+import { type NavItem, type SharedData } from '@/types';
+import { Link, usePage } from '@inertiajs/react';
+import { LayoutGrid, Users } from 'lucide-react';
 import AppLogo from './app-logo';
 
 const mainNavItems: NavItem[] = [
@@ -24,20 +25,24 @@ const mainNavItems: NavItem[] = [
   },
 ];
 
-const footerNavItems: NavItem[] = [
+const adminFooterNavItems: NavItem[] = [
   {
-    title: 'Repository',
-    href: 'https://github.com/laravel/react-starter-kit',
-    icon: Folder,
-  },
-  {
-    title: 'Documentation',
-    href: 'https://laravel.com/docs/starter-kits#react',
-    icon: BookOpen,
+    title: 'User Management',
+    href: AdminUserController.index.url(),
+    icon: Users,
   },
 ];
 
 export function AppSidebar() {
+  const page = usePage<SharedData>();
+  const roles = Array.isArray(page.props.auth?.user?.roles)
+    ? page.props.auth.user.roles
+    : [];
+  const isAdmin = roles.some((role) =>
+    typeof role === 'string' ? role === 'admin' : role?.name === 'admin',
+  );
+  const footerItems = isAdmin ? adminFooterNavItems : [];
+
   return (
     <Sidebar collapsible="icon" variant="inset">
       <SidebarHeader>
@@ -57,7 +62,9 @@ export function AppSidebar() {
       </SidebarContent>
 
       <SidebarFooter>
-        <NavFooter items={footerNavItems} className="mt-auto" />
+        {footerItems.length > 0 && (
+          <NavFooter items={footerItems} className="mt-auto" />
+        )}
         <NavUser />
       </SidebarFooter>
     </Sidebar>

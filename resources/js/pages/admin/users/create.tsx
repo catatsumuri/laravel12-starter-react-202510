@@ -1,0 +1,146 @@
+import AdminUserController from '@/actions/App/Http/Controllers/Admin/UserController';
+import Heading from '@/components/heading';
+import InputError from '@/components/input-error';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import AppLayout from '@/layouts/app-layout';
+import { type BreadcrumbItem } from '@/types';
+import { Form, Head, Link } from '@inertiajs/react';
+
+type RoleOption = {
+  id: number;
+  name: string;
+};
+
+const breadcrumbs: BreadcrumbItem[] = [
+  {
+    title: 'Users',
+    href: AdminUserController.index.url(),
+  },
+  {
+    title: 'Create user',
+    href: AdminUserController.create.url(),
+  },
+];
+
+export default function CreateUser({ roles }: { roles: RoleOption[] }) {
+  const defaultRole = roles[0]?.name ?? '';
+
+  return (
+    <AppLayout breadcrumbs={breadcrumbs}>
+      <Head title="Create user" />
+
+      <div className="flex items-center justify-between">
+        <Heading
+          title="Create user"
+          description="Add a new user account to the application"
+        />
+        <Button asChild variant="outline">
+          <Link href={AdminUserController.index.url()}>Back to users</Link>
+        </Button>
+      </div>
+
+      <div className="rounded-lg border border-border bg-card p-6 shadow-sm">
+        <Form
+          {...AdminUserController.store.form()}
+          resetOnSuccess={['password', 'password_confirmation']}
+          disableWhileProcessing
+          className="space-y-6"
+        >
+          {({ processing, errors }) => (
+            <>
+              <div className="grid gap-6 md:grid-cols-2">
+                <div className="grid gap-2">
+                  <Label htmlFor="name">Name</Label>
+                  <Input
+                    id="name"
+                    type="text"
+                    required
+                    autoFocus
+                    name="name"
+                    placeholder="Full name"
+                  />
+                  <InputError message={errors.name} />
+                </div>
+
+                <div className="grid gap-2">
+                  <Label htmlFor="email">Email</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    required
+                    name="email"
+                    placeholder="email@example.com"
+                  />
+                  <InputError message={errors.email} />
+                </div>
+              </div>
+
+              <div className="grid gap-6 md:grid-cols-2">
+                <div className="grid gap-2">
+                  <Label htmlFor="password">Password</Label>
+                  <Input
+                    id="password"
+                    type="password"
+                    required
+                    name="password"
+                    placeholder="Password"
+                  />
+                  <InputError message={errors.password} />
+                </div>
+
+                <div className="grid gap-2">
+                  <Label htmlFor="password_confirmation">Confirm password</Label>
+                  <Input
+                    id="password_confirmation"
+                    type="password"
+                    required
+                    name="password_confirmation"
+                    placeholder="Confirm password"
+                  />
+                  <InputError message={errors.password_confirmation} />
+                </div>
+              </div>
+
+              <div className="grid gap-2 md:w-1/2">
+                <Label htmlFor="role">Role</Label>
+                <select
+                  id="role"
+                  name="role"
+                  defaultValue={defaultRole}
+                  required
+                  className="h-10 rounded-md border border-input bg-transparent px-3 text-sm text-foreground shadow-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                >
+                  <option value="" disabled>
+                    Select a role
+                  </option>
+                  {roles.map((role) => (
+                    <option key={role.id} value={role.name}>
+                      {role.name}
+                    </option>
+                  ))}
+                </select>
+                <InputError message={errors.role} />
+              </div>
+
+              <div className="flex gap-3">
+                <Button type="submit" disabled={processing}>
+                  Create user
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  asChild
+                  disabled={processing}
+                >
+                  <Link href={AdminUserController.index.url()}>Cancel</Link>
+                </Button>
+              </div>
+            </>
+          )}
+        </Form>
+      </div>
+    </AppLayout>
+  );
+}
