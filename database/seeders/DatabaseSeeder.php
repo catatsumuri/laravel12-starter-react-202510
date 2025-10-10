@@ -3,9 +3,10 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\PermissionRegistrar;
 
 class DatabaseSeeder extends Seeder
 {
@@ -14,15 +15,32 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        app(PermissionRegistrar::class)->forgetCachedPermissions();
 
-        User::firstOrCreate(
-            ['email' => 'test@example.com'],
+        $adminRole = Role::firstOrCreate(['name' => 'admin']);
+        $userRole = Role::firstOrCreate(['name' => 'user']);
+
+        $admin = User::updateOrCreate(
+            ['email' => 'admin@example.com'],
             [
-                'name' => 'Test User',
+                'name' => 'Admin User',
                 'password' => Hash::make('password'),
                 'email_verified_at' => now(),
             ]
         );
+        $admin->syncRoles([$adminRole]);
+
+        foreach (range(1, 10) as $index) {
+            $user = User::updateOrCreate(
+                ['email' => "user{$index}@example.com"],
+                [
+                    'name' => "User {$index}",
+                    'password' => Hash::make('password'),
+                    'email_verified_at' => now(),
+                ]
+            );
+
+            $user->syncRoles([$userRole]);
+        }
     }
 }
