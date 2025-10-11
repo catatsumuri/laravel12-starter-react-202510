@@ -2,8 +2,10 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\User;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Http\Request;
+use Illuminate\Notifications\DatabaseNotification;
 use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
@@ -52,10 +54,34 @@ class HandleInertiaRequests extends Middleware
                 'user' => $user,
             ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
+            'notifications' => $this->notificationFeed($user),
             'flash' => [
                 'success' => fn () => $request->session()->get('success') ?? $request->session()->get('status'),
                 'error' => fn () => $request->session()->get('error') ?? $request->session()->get('danger'),
             ],
         ];
+    }
+
+    /**
+     * @return array<int, array<string, mixed>>
+     */
+    protected function notificationFeed(?User $user): array
+    {
+        if (! $user) {
+            return [];
+        }
+
+        return $user->notifications()
+            ->latest('created_at')
+            ->get()
+            ->map(fn (DatabaseNotification $notification) => [
+                'id' => (string) $notification->id,
+                'type' => $notification->data['type'] ?? 'info',
+                'title' => $notification->data['title'] ?? 'Notification',
+                'message' => $notification->data['message'] ?? '',
+                'time' => optional($notification->created_at)?->diffForHumans() ?? '',
+                'read' => ! is_null($notification->read_at),
+            ])
+            ->all();
     }
 }
