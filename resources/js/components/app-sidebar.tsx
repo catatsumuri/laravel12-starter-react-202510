@@ -1,3 +1,4 @@
+import ApplicationSettingController from '@/actions/App/Http/Controllers/Admin/ApplicationSettingController';
 import AdminUserController from '@/actions/App/Http/Controllers/Admin/UserController';
 import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
@@ -14,7 +15,7 @@ import {
 import { dashboard } from '@/routes';
 import { type NavItem, type SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
-import { LayoutGrid, Users } from 'lucide-react';
+import { LayoutGrid, Settings, Users } from 'lucide-react';
 import AppLogo from './app-logo';
 
 const mainNavItems: NavItem[] = [
@@ -26,6 +27,11 @@ const mainNavItems: NavItem[] = [
 ];
 
 const adminFooterNavItems: NavItem[] = [
+  {
+    title: 'Application settings',
+    href: ApplicationSettingController.edit.url(),
+    icon: Settings,
+  },
   {
     title: 'User Management',
     href: AdminUserController.index.url(),
