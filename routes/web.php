@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\NotificationController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -12,6 +13,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', function () {
         return Inertia::render('dashboard');
     })->name('dashboard');
+
+    Route::patch('notifications', [NotificationController::class, 'readAll'])
+        ->name('notifications.read-all');
+    Route::patch('notifications/{notification}', [NotificationController::class, 'read'])
+        ->name('notifications.read');
+    Route::delete('notifications/{notification}', [NotificationController::class, 'destroy'])
+        ->name('notifications.destroy');
 });
 
 Route::middleware(['auth', 'verified', 'admin'])

@@ -14,11 +14,15 @@ import { Form } from '@inertiajs/react';
 import type { ComponentProps } from 'react';
 import { Trash } from 'lucide-react';
 
+type TriggerButtonProps = ComponentProps<typeof Button> & {
+  'data-test'?: string;
+};
+
 interface AdminUserDeleteDialogProps {
   userId: number;
   userName: string;
   disabled?: boolean;
-  triggerProps?: ComponentProps<typeof Button>;
+  triggerProps?: TriggerButtonProps;
   confirmLabel?: string;
 }
 

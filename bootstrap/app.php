@@ -33,6 +33,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'admin' => EnsureUserIsAdmin::class,
         ]);
     })
+    ->withEvents()
     ->withExceptions(function (Exceptions $exceptions) {
         //
     })->create();

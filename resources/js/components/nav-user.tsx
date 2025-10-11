@@ -1,3 +1,4 @@
+import { NotificationsDropdown } from '@/components/notifications-dropdown';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -23,12 +24,12 @@ export function NavUser() {
 
   return (
     <SidebarMenu>
-      <SidebarMenuItem>
+      <SidebarMenuItem className="flex items-center gap-2">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <SidebarMenuButton
               size="lg"
-              className="group text-sidebar-accent-foreground data-[state=open]:bg-sidebar-accent"
+              className="group flex-1 text-sidebar-accent-foreground data-[state=open]:bg-sidebar-accent"
               data-test="sidebar-menu-button"
             >
               <UserInfo user={auth.user} />
@@ -45,6 +46,13 @@ export function NavUser() {
             <UserMenuContent user={auth.user} />
           </DropdownMenuContent>
         </DropdownMenu>
+        {state === 'expanded' && (
+          <div className="shrink-0">
+            <NotificationsDropdown
+              buttonClassName="text-sidebar-accent-foreground hover:bg-sidebar-accent/80 focus-visible:ring-sidebar-ring"
+            />
+          </div>
+        )}
       </SidebarMenuItem>
     </SidebarMenu>
   );
