@@ -38,6 +38,8 @@ export interface SharedData {
   translations?: Record<string, unknown>;
   fallbackTranslations?: Record<string, unknown>;
   availableLocales?: string[];
+  timezone?: string;
+  availableTimezones?: string[];
   quote: { message: string; author: string };
   auth: Auth;
   sidebarOpen: boolean;

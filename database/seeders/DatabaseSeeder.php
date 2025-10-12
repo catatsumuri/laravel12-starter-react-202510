@@ -43,6 +43,6 @@ class DatabaseSeeder extends Seeder
             $user->syncRoles([$userRole]);
         }
 
-        $this->call(NotificationSeeder::class);
+        // $this->call(NotificationSeeder::class);
     }
 }

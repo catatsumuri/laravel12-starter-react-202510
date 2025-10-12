@@ -14,12 +14,8 @@ import { useTranslation } from 'react-i18next';
 export default function SettingsLayout({ children }: PropsWithChildren) {
   const { t } = useTranslation();
 
-  // When server-side rendering, we only render the layout on the client...
-  if (typeof window === 'undefined') {
-    return null;
-  }
-
-  const currentPath = window.location.pathname;
+  const isBrowser = typeof window !== 'undefined';
+  const currentPath = isBrowser ? window.location.pathname : '';
   const sidebarNavItems = useMemo<NavItem[]>(
     () => [
       {
@@ -45,6 +41,11 @@ export default function SettingsLayout({ children }: PropsWithChildren) {
     ],
     [t],
   );
+
+  // When server-side rendering, we only render the layout on the client...
+  if (!isBrowser) {
+    return null;
+  }
 
   return (
     <div className="px-4 py-6">
