@@ -70,13 +70,12 @@ class ApplicationSettingController extends Controller
         $driver = config("database.connections.{$connection}.driver");
 
         if ($driver !== 'sqlite') {
-            DB::purge($connection);
-            DB::reconnect($connection);
+            $database = DB::connection($connection);
 
             if ($driver === 'pgsql') {
-                DB::statement("SET TIME ZONE '{$timezone}'");
+                $database->statement("SET TIME ZONE '{$timezone}'");
             } elseif (in_array($driver, ['mysql', 'mariadb'])) {
-                DB::statement("SET time_zone = '{$offset}'");
+                $database->statement("SET time_zone = '{$offset}'");
             }
         }
 

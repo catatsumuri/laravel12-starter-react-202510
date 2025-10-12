@@ -18,13 +18,13 @@ dataset('timezones', [
 it('stores timestamps in database respecting timezone', function (string $timezone) {
     $connection = config('database.default');
     $originalAppTimezone = config('app.timezone');
-    $originalDbTimezone = config('database.connections.{$connection}.timezone');
+    $originalDbTimezone = config("database.connections.{$connection}.timezone");
     $originalPhpTimezone = date_default_timezone_get();
     $offset = CarbonTimeZone::create($timezone)->toOffsetName();
 
     try {
         Config::set('app.timezone', $timezone);
-        Config::set('database.connections.{$connection}.timezone', $offset);
+        Config::set("database.connections.{$connection}.timezone", $offset);
         date_default_timezone_set($timezone);
 
         DB::purge($connection);
@@ -43,7 +43,7 @@ it('stores timestamps in database respecting timezone', function (string $timezo
             ->toBe($offset);
     } finally {
         Config::set('app.timezone', $originalAppTimezone);
-        Config::set('database.connections.{$connection}.timezone', $originalDbTimezone);
+        Config::set("database.connections.{$connection}.timezone", $originalDbTimezone);
         date_default_timezone_set($originalPhpTimezone);
 
         DB::purge($connection);

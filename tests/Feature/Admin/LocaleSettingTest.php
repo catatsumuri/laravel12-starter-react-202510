@@ -42,7 +42,6 @@ it('allows admins to update the timezone', function () {
     $admin->assignRole('admin');
 
     Setting::updateValue('app.timezone', config('app.timezone'));
-    dump('before', Setting::all()->toArray());
 
     $this->actingAs($admin)
         ->from(route('admin.settings.edit'))
