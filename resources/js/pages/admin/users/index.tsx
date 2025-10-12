@@ -6,6 +6,7 @@ import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem, type SharedData } from '@/types';
 import { Head, Link, usePage } from '@inertiajs/react';
 import { Eye, Pencil, Plus } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 type UserListItem = {
   id: number;
@@ -26,30 +27,30 @@ type UsersResponse = {
   links: PaginationLink[];
 };
 
-const breadcrumbs: BreadcrumbItem[] = [
-  {
-    title: 'Users',
-    href: AdminUserController.index.url(),
-  },
-];
-
 export default function UsersIndex({ users }: { users: UsersResponse }) {
+  const { t } = useTranslation();
+  const breadcrumbs: BreadcrumbItem[] = [
+    {
+      title: t('admin.users.title'),
+      href: AdminUserController.index.url(),
+    },
+  ];
   const { auth } = usePage<SharedData>().props;
   const paginationLinks = users.links ?? [];
 
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
-      <Head title="Users" />
+      <Head title={t('admin.users.title')} />
 
       <div className="flex items-center justify-between">
         <Heading
-          title="Users"
-          description="Manage application user accounts"
+          title={t('admin.users.title')}
+          description={t('admin.users.description')}
         />
         <Button asChild>
           <Link href={AdminUserController.create.url()} className="inline-flex items-center gap-2">
             <Plus className="size-4" />
-            New user
+            {t('admin.users.new_user')}
           </Link>
         </Button>
       </div>
@@ -59,16 +60,16 @@ export default function UsersIndex({ users }: { users: UsersResponse }) {
           <thead className="bg-muted/50">
             <tr>
               <th className="px-4 py-3 text-left font-medium text-muted-foreground">
-                Name
+                {t('common.name')}
               </th>
               <th className="px-4 py-3 text-left font-medium text-muted-foreground">
-                Email
+                {t('common.email')}
               </th>
               <th className="px-4 py-3 text-left font-medium text-muted-foreground">
-                Roles
+                {t('common.roles')}
               </th>
               <th className="px-4 py-3 text-right font-medium text-muted-foreground">
-                Actions
+                {t('common.actions')}
               </th>
             </tr>
           </thead>
@@ -79,7 +80,7 @@ export default function UsersIndex({ users }: { users: UsersResponse }) {
                   colSpan={4}
                   className="px-4 py-6 text-center text-sm text-muted-foreground"
                 >
-                  No users found.
+                  {t('admin.users.no_users')}
                 </td>
               </tr>
             ) : (
@@ -107,7 +108,7 @@ export default function UsersIndex({ users }: { users: UsersResponse }) {
                           data-test={`view-user-${user.id}`}
                         >
                           <Eye className="size-4" />
-                          View
+                          {t('admin.users.view')}
                         </Link>
                       </Button>
 
@@ -122,7 +123,7 @@ export default function UsersIndex({ users }: { users: UsersResponse }) {
                           data-test={`edit-user-${user.id}`}
                         >
                           <Pencil className="size-4" />
-                          Edit
+                          {t('admin.users.edit')}
                         </Link>
                       </Button>
 

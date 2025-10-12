@@ -16,30 +16,11 @@ import { dashboard } from '@/routes';
 import { type NavItem, type SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
 import { LayoutGrid, Settings, Users } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import AppLogo from './app-logo';
 
-const mainNavItems: NavItem[] = [
-  {
-    title: 'Dashboard',
-    href: dashboard(),
-    icon: LayoutGrid,
-  },
-];
-
-const adminFooterNavItems: NavItem[] = [
-  {
-    title: 'Application settings',
-    href: ApplicationSettingController.edit.url(),
-    icon: Settings,
-  },
-  {
-    title: 'User Management',
-    href: AdminUserController.index.url(),
-    icon: Users,
-  },
-];
-
 export function AppSidebar() {
+  const { t } = useTranslation();
   const page = usePage<SharedData>();
   const roles = Array.isArray(page.props.auth?.user?.roles)
     ? page.props.auth.user.roles
@@ -47,6 +28,25 @@ export function AppSidebar() {
   const isAdmin = roles.some((role) =>
     typeof role === 'string' ? role === 'admin' : role?.name === 'admin',
   );
+  const mainNavItems: NavItem[] = [
+    {
+      title: t('navigation.dashboard'),
+      href: dashboard(),
+      icon: LayoutGrid,
+    },
+  ];
+  const adminFooterNavItems: NavItem[] = [
+    {
+      title: t('navigation.application_settings'),
+      href: ApplicationSettingController.edit.url(),
+      icon: Settings,
+    },
+    {
+      title: t('navigation.user_management'),
+      href: AdminUserController.index.url(),
+      icon: Users,
+    },
+  ];
   const footerItems = isAdmin ? adminFooterNavItems : [];
 
   return (

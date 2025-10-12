@@ -7,23 +7,25 @@ import { Label } from '@/components/ui/label';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Form, Head } from '@inertiajs/react';
-
-const breadcrumbs: BreadcrumbItem[] = [
-  {
-    title: 'Admin settings',
-    href: ApplicationSettingController.edit.url(),
-  },
-];
+import { useTranslation } from 'react-i18next';
 
 export default function AdminSettingsIndex({ appName }: { appName: string }) {
+  const { t } = useTranslation();
+  const breadcrumbs: BreadcrumbItem[] = [
+    {
+      title: t('navigation.application_settings'),
+      href: ApplicationSettingController.edit.url(),
+    },
+  ];
+
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
-      <Head title="Application settings" />
+      <Head title={t('admin.settings.title')} />
 
       <div className="max-w-2xl space-y-6">
         <Heading
-          title="Application settings"
-          description="Update the core application configuration."
+          title={t('admin.settings.title')}
+          description={t('admin.settings.description')}
         />
 
         <Form
@@ -36,27 +38,29 @@ export default function AdminSettingsIndex({ appName }: { appName: string }) {
           {({ processing, errors, recentlySuccessful }) => (
             <>
               <div className="space-y-2">
-                <Label htmlFor="app_name">Application name</Label>
+                <Label htmlFor="app_name">{t('common.application_name')}</Label>
                 <Input
                   id="app_name"
                   name="app_name"
                   defaultValue={appName}
-                  placeholder="Enter application name"
+                  placeholder={t('common.application_name_placeholder')}
                   required
                   maxLength={255}
                   disabled={processing}
                 />
                 <InputError className="mt-1" message={errors.app_name} />
                 <p className="text-sm text-muted-foreground">
-                  This name appears in navigation and document titles.
+                  {t('common.application_name_helper')}
                 </p>
               </div>
 
               <div className="flex items-center gap-4">
-                <Button disabled={processing}>Save changes</Button>
+                <Button disabled={processing}>
+                  {t('common.save_changes')}
+                </Button>
                 {recentlySuccessful && (
                   <span className="text-sm text-muted-foreground">
-                    Saved
+                    {t('common.saved')}
                   </span>
                 )}
               </div>
@@ -67,4 +71,3 @@ export default function AdminSettingsIndex({ appName }: { appName: string }) {
     </AppLayout>
   );
 }
-

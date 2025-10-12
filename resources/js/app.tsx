@@ -4,6 +4,7 @@ import { createInertiaApp, router } from '@inertiajs/react';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { createRoot } from 'react-dom/client';
 import { initializeTheme } from './hooks/use-appearance';
+import { configureI18n } from './lib/i18n';
 import { type SharedData } from './types';
 
 const initialDocumentTitle =
@@ -27,12 +28,42 @@ const resolveAppName = (props: unknown): string | null => {
 
 let currentAppName = defaultAppName;
 
+const applyLocalization = (props: unknown) => {
+  if (!props || typeof props !== 'object') {
+    return;
+  }
+
+  const data = props as Partial<SharedData>;
+  const locale =
+    typeof data.locale === 'string' && data.locale.length > 0
+      ? data.locale
+      : null;
+
+  if (!locale) {
+    return;
+  }
+
+  const fallbackLocale =
+    typeof data.fallbackLocale === 'string' && data.fallbackLocale.length > 0
+      ? data.fallbackLocale
+      : locale;
+
+  configureI18n(
+    locale,
+    fallbackLocale,
+    data.translations as Record<string, unknown>,
+    data.fallbackTranslations as Record<string, unknown>,
+  );
+};
+
 router.on('navigate', (event) => {
   const nextName = resolveAppName(event.detail.page.props);
 
   if (nextName) {
     currentAppName = nextName;
   }
+
+  applyLocalization(event.detail.page.props);
 });
 
 createInertiaApp({
@@ -49,6 +80,8 @@ createInertiaApp({
     if (resolved) {
       currentAppName = resolved;
     }
+
+    applyLocalization(props.initialPage.props);
 
     const root = createRoot(el);
 

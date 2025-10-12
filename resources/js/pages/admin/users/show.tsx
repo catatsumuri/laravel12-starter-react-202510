@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link } from '@inertiajs/react';
+import { useTranslation } from 'react-i18next';
 
 type UserDetail = {
   id: number;
@@ -28,9 +29,10 @@ export default function ShowUser({
   user: UserDetail;
   canDelete: boolean;
 }) {
+  const { t } = useTranslation();
   const breadcrumbs: BreadcrumbItem[] = [
     {
-      title: 'Users',
+      title: t('admin.users.title'),
       href: AdminUserController.index.url(),
     },
     {
@@ -41,20 +43,24 @@ export default function ShowUser({
 
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
-      <Head title={`User: ${user.name}`} />
+      <Head title={t('admin.users.show.head_title', { name: user.name })} />
 
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <Heading
           title={user.name}
-          description="Review user profile and account status"
+          description={t('admin.users.show.description')}
         />
         <div className="flex flex-wrap gap-2">
           <Button asChild variant="outline">
-            <Link href={AdminUserController.index.url()}>Back to users</Link>
+            <Link href={AdminUserController.index.url()}>
+              {t('admin.users.show.back')}
+            </Link>
           </Button>
 
           <Button asChild>
-            <Link href={AdminUserController.edit.url(user.id)}>Edit user</Link>
+            <Link href={AdminUserController.edit.url(user.id)}>
+              {t('admin.users.show.edit')}
+            </Link>
           </Button>
 
           <AdminUserDeleteDialog
@@ -66,7 +72,7 @@ export default function ShowUser({
               size: 'default',
               'data-test': 'delete-user',
             }}
-            confirmLabel="Delete user"
+            confirmLabel={t('admin.users.show.delete')}
           />
         </div>
       </div>
@@ -74,21 +80,27 @@ export default function ShowUser({
       <div className="grid gap-6 lg:grid-cols-2">
         <div className="space-y-4 rounded-lg border border-border bg-card p-6 shadow-sm">
           <h3 className="text-sm font-semibold text-muted-foreground">
-            Profile
+            {t('admin.users.show.profile_heading')}
           </h3>
           <div className="grid gap-4">
             <div>
-              <p className="text-xs uppercase text-muted-foreground">Name</p>
+              <p className="text-xs uppercase text-muted-foreground">
+                {t('admin.users.show.name_label')}
+              </p>
               <p className="text-base font-medium text-foreground">
                 {user.name}
               </p>
             </div>
             <div>
-              <p className="text-xs uppercase text-muted-foreground">Email</p>
+              <p className="text-xs uppercase text-muted-foreground">
+                {t('admin.users.show.email_label')}
+              </p>
               <p className="text-base text-foreground">{user.email}</p>
             </div>
             <div>
-              <p className="text-xs uppercase text-muted-foreground">Roles</p>
+              <p className="text-xs uppercase text-muted-foreground">
+                {t('admin.users.show.roles_label')}
+              </p>
               <div className="mt-2 flex flex-wrap gap-2">
                 {user.roles.length > 0 ? (
                   user.roles.map((role) => (
@@ -97,7 +109,9 @@ export default function ShowUser({
                     </Badge>
                   ))
                 ) : (
-                  <Badge variant="outline">No roles assigned</Badge>
+                  <Badge variant="outline">
+                    {t('admin.users.show.no_roles')}
+                  </Badge>
                 )}
               </div>
             </div>
@@ -106,22 +120,24 @@ export default function ShowUser({
 
         <div className="space-y-4 rounded-lg border border-border bg-card p-6 shadow-sm">
           <h3 className="text-sm font-semibold text-muted-foreground">
-            Account status
+            {t('admin.users.show.account_heading')}
           </h3>
           <div className="grid gap-4">
             <div>
               <p className="text-xs uppercase text-muted-foreground">
-                Email verification
+                {t('admin.users.show.email_verification_label')}
               </p>
               <p className="text-base text-foreground">
                 {user.email_verified_at
-                  ? `Verified (${formatDateTime(user.email_verified_at)})`
-                  : 'Not verified'}
+                  ? t('admin.users.show.verified', {
+                      date: formatDateTime(user.email_verified_at),
+                    })
+                  : t('admin.users.show.not_verified')}
               </p>
             </div>
             <div>
               <p className="text-xs uppercase text-muted-foreground">
-                Created at
+                {t('admin.users.show.created_at_label')}
               </p>
               <p className="text-base text-foreground">
                 {formatDateTime(user.created_at)}
@@ -129,7 +145,7 @@ export default function ShowUser({
             </div>
             <div>
               <p className="text-xs uppercase text-muted-foreground">
-                Updated at
+                {t('admin.users.show.updated_at_label')}
               </p>
               <p className="text-base text-foreground">
                 {formatDateTime(user.updated_at)}
@@ -137,12 +153,14 @@ export default function ShowUser({
             </div>
             <div>
               <p className="text-xs uppercase text-muted-foreground">
-                Account state
+                {t('admin.users.show.account_state_label')}
               </p>
               <p className="text-base text-foreground">
                 {user.deleted_at
-                  ? `Soft deleted (${formatDateTime(user.deleted_at)})`
-                  : 'Active'}
+                  ? t('admin.users.show.soft_deleted', {
+                      date: formatDateTime(user.deleted_at),
+                    })
+                  : t('admin.users.show.active')}
               </p>
             </div>
           </div>

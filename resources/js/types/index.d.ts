@@ -33,6 +33,10 @@ export interface Notification {
 
 export interface SharedData {
   name: string;
+  locale: string;
+  fallbackLocale?: string;
+  translations?: Record<string, unknown>;
+  fallbackTranslations?: Record<string, unknown>;
   quote: { message: string; author: string };
   auth: Auth;
   sidebarOpen: boolean;

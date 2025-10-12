@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Http\Request;
 use Illuminate\Notifications\DatabaseNotification;
+use Illuminate\Support\Facades\Lang;
 use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
@@ -46,10 +47,18 @@ class HandleInertiaRequests extends Middleware
             $user->loadMissing('roles:id,name');
         }
 
+        $locale = app()->getLocale();
+        $fallbackLocale = config('app.fallback_locale');
+
         return [
             ...parent::share($request),
             'name' => config('app.name'),
-            'locale' => app()->getLocale(),
+            'locale' => $locale,
+            'fallbackLocale' => $fallbackLocale,
+            'translations' => $this->frontendTranslations($locale),
+            'fallbackTranslations' => $fallbackLocale !== $locale
+                ? $this->frontendTranslations($fallbackLocale)
+                : [],
             'quote' => ['message' => trim($message), 'author' => trim($author)],
             'auth' => [
                 'user' => $user,
@@ -84,5 +93,15 @@ class HandleInertiaRequests extends Middleware
                 'read' => ! is_null($notification->read_at),
             ])
             ->all();
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    protected function frontendTranslations(string $locale): array
+    {
+        $translations = Lang::get('frontend', [], $locale);
+
+        return is_array($translations) ? $translations : [];
     }
 }

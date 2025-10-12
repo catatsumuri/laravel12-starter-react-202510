@@ -35,29 +35,9 @@ import { dashboard } from '@/routes';
 import { type BreadcrumbItem, type NavItem, type SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
 import { LayoutGrid, Menu, Search, Settings, Users } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import AppLogo from './app-logo';
 import AppLogoIcon from './app-logo-icon';
-
-const mainNavItems: NavItem[] = [
-  {
-    title: 'Dashboard',
-    href: dashboard(),
-    icon: LayoutGrid,
-  },
-];
-
-const adminNavItems: NavItem[] = [
-  {
-    title: 'Application settings',
-    href: ApplicationSettingController.edit.url(),
-    icon: Settings,
-  },
-  {
-    title: 'User Management',
-    href: AdminUserController.index.url(),
-    icon: Users,
-  },
-];
 
 const activeItemStyles =
   'text-neutral-900 dark:bg-neutral-800 dark:text-neutral-100';
@@ -67,12 +47,32 @@ interface AppHeaderProps {
 }
 
 export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
+  const { t } = useTranslation();
   const page = usePage<SharedData>();
   const { auth } = page.props;
   const userRoles = Array.isArray(auth.user?.roles) ? auth.user.roles : [];
   const isAdmin = userRoles.some((role) =>
     typeof role === 'string' ? role === 'admin' : role?.name === 'admin',
   );
+  const mainNavItems: NavItem[] = [
+    {
+      title: t('navigation.dashboard'),
+      href: dashboard(),
+      icon: LayoutGrid,
+    },
+  ];
+  const adminNavItems: NavItem[] = [
+    {
+      title: t('navigation.application_settings'),
+      href: ApplicationSettingController.edit.url(),
+      icon: Settings,
+    },
+    {
+      title: t('navigation.user_management'),
+      href: AdminUserController.index.url(),
+      icon: Users,
+    },
+  ];
   const rightNavItems = isAdmin ? adminNavItems : [];
   const getInitials = useInitials();
   return (
@@ -95,7 +95,9 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
                 side="left"
                 className="flex h-full w-64 flex-col items-stretch justify-between bg-sidebar"
               >
-                <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
+                <SheetTitle className="sr-only">
+                  {t('auth.navigation_menu')}
+                </SheetTitle>
                 <SheetHeader className="flex justify-start text-left">
                   <AppLogoIcon className="h-6 w-6 fill-current text-black dark:text-white" />
                 </SheetHeader>
