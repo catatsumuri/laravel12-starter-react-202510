@@ -18,8 +18,10 @@ it('marks a notification as read for the owning user', function () {
         'notifiable_id' => $user->getKey(),
         'data' => [
             'type' => 'success',
-            'title' => 'New user registered',
-            'message' => 'Taro Tanaka has created an account',
+            'title' => __('admin.notifications.new_user_registered.title'),
+            'message' => __('admin.notifications.new_user_registered.message', [
+                'name' => 'Taro Tanaka',
+            ]),
         ],
         'read_at' => null,
     ]);

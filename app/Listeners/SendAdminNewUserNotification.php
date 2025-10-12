@@ -33,11 +33,10 @@ class SendAdminNewUserNotification
             $admins,
             new SystemNotification([
                 'type' => 'success',
-                'title' => __('New user registered'),
-                'message' => __(
-                    ':name has created an account.',
-                    ['name' => $newUser->name],
-                ),
+                'title' => __('admin.notifications.new_user_registered.title'),
+                'message' => __('admin.notifications.new_user_registered.message', [
+                    'name' => $newUser->name,
+                ]),
             ]),
         );
     }

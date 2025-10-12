@@ -181,6 +181,10 @@ return [
             'locale_description' => 'Choose which language the application should use.',
             'locale_label' => 'Select language',
             'locale_updated' => 'Language updated.',
+            'timezone_title' => 'Application timezone',
+            'timezone_description' => 'Select the timezone that the application should use.',
+            'timezone_label' => 'Select timezone',
+            'timezone_updated' => 'Timezone updated.',
         ],
         'users' => [
             'title' => 'Users',
@@ -236,6 +240,54 @@ return [
                 'soft_deleted' => 'Soft deleted ({{date}})',
                 'active' => 'Active',
             ],
+        ],
+    ],
+    'dashboard' => [
+        'highlights' => [
+            'heading' => 'Key highlights',
+            'performance' => [
+                'title' => 'Monthly performance',
+                'description' => 'Monitor revenue, conversion rate, and churn trends for the current reporting cycle.',
+            ],
+            'adoption' => [
+                'title' => 'Feature adoption',
+                'description' => 'Highlight the product areas that are driving the most engagement across customer segments.',
+            ],
+            'support' => [
+                'title' => 'Customer experience',
+                'description' => 'Review open conversations, satisfaction scores, and response times to keep teams aligned.',
+            ],
+        ],
+        'insights' => [
+            'heading' => 'Operational insights',
+            'description' => 'Use these shared updates to prepare for team stand-ups and strategic planning sessions.',
+            'roadmap' => [
+                'title' => 'Roadmap updates',
+                'description' => 'Upcoming releases, dependencies, and owners are outlined for easier cross-team coordination.',
+            ],
+            'revenue' => [
+                'title' => 'Revenue milestones',
+                'description' => 'Recurring revenue performance and expansion opportunities for the next two quarters.',
+            ],
+            'retention' => [
+                'title' => 'Retention focus',
+                'description' => 'Cohorts that need personalized outreach along with the plays recommended for follow-up.',
+            ],
+            'team' => [
+                'title' => 'Team celebrations',
+                'description' => 'Wins, learnings, and coaching moments gathered from the latest sprint and customer calls.',
+            ],
+            'cta' => [
+                'title' => 'Next steps',
+                'description' => 'Schedule a working session with product and success leads to confirm the priorities above.',
+            ],
+        ],
+    ],
+    'notifications' => [
+        'dropdown' => [
+            'title' => 'Notifications',
+            'mark_all' => 'Mark all as read',
+            'empty' => 'You have no notifications',
         ],
     ],
     'welcome' => [

@@ -15,12 +15,14 @@ import {
 } from '@/routes/notifications';
 import { type Notification, type SharedData } from '@/types';
 import { router, usePage } from '@inertiajs/react';
+import { useTranslation } from 'react-i18next';
 
 export function NotificationsDropdown({
   buttonClassName,
 }: {
   buttonClassName?: string;
 }) {
+  const { t } = useTranslation();
   const page = usePage<SharedData>();
   const sharedNotifications = useMemo(() => {
     const data = page.props.notifications;
@@ -134,7 +136,7 @@ export function NotificationsDropdown({
         <div className="flex items-center justify-between border-b border-border px-4 py-3">
           <div className="flex items-center gap-2">
             <h3 className="text-sm font-semibold text-foreground">
-              Notifications
+              {t('notifications.dropdown.title')}
             </h3>
             {unreadCount > 0 && (
               <span className="flex size-5 items-center justify-center rounded-full bg-destructive text-[10px] font-bold text-destructive-foreground">
@@ -149,7 +151,7 @@ export function NotificationsDropdown({
               className="h-7 text-xs"
               onClick={markAllAsRead}
             >
-              Mark all as read
+              {t('notifications.dropdown.mark_all')}
             </Button>
           )}
         </div>
@@ -159,7 +161,7 @@ export function NotificationsDropdown({
             <div className="flex flex-col items-center justify-center py-12 text-center">
               <Bell className="size-12 text-muted-foreground/50" />
               <p className="mt-2 text-sm text-muted-foreground">
-                You have no notifications
+                {t('notifications.dropdown.empty')}
               </p>
             </div>
           ) : (
@@ -213,18 +215,6 @@ export function NotificationsDropdown({
             </div>
           )}
         </div>
-
-        {notifications.length > 0 && (
-          <div className="border-t border-border p-2">
-            <Button
-              variant="ghost"
-              className="w-full text-sm"
-              onClick={() => setOpen(false)}
-            >
-              View all notifications
-            </Button>
-          </div>
-        )}
       </DropdownMenuContent>
     </DropdownMenu>
   );
