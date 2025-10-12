@@ -6,18 +6,19 @@ import { edit as editAppearance } from '@/routes/appearance';
 import { edit as editPassword } from '@/routes/password';
 import { edit } from '@/routes/profile';
 import { show } from '@/routes/two-factor';
-import { type NavItem } from '@/types';
-import { Link } from '@inertiajs/react';
+import { type NavItem, type SharedData } from '@/types';
+import { Link, usePage } from '@inertiajs/react';
 import { type PropsWithChildren, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 export default function SettingsLayout({ children }: PropsWithChildren) {
   const { t } = useTranslation();
+  const { allowAppearanceCustomization = true } = usePage<SharedData>().props;
 
   const isBrowser = typeof window !== 'undefined';
   const currentPath = isBrowser ? window.location.pathname : '';
-  const sidebarNavItems = useMemo<NavItem[]>(
-    () => [
+  const sidebarNavItems = useMemo<NavItem[]>(() => {
+    const items: NavItem[] = [
       {
         title: t('settings.profile.breadcrumb'),
         href: edit(),
@@ -33,14 +34,18 @@ export default function SettingsLayout({ children }: PropsWithChildren) {
         href: show(),
         icon: null,
       },
-      {
+    ];
+
+    if (allowAppearanceCustomization) {
+      items.push({
         title: t('settings.appearance.breadcrumb'),
         href: editAppearance(),
         icon: null,
-      },
-    ],
-    [t],
-  );
+      });
+    }
+
+    return items;
+  }, [allowAppearanceCustomization, t]);
 
   // When server-side rendering, we only render the layout on the client...
   if (!isBrowser) {

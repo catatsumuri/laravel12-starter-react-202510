@@ -1,36 +1,130 @@
 import ApplicationSettingController from '@/actions/App/Http/Controllers/Admin/ApplicationSettingController';
 import Heading from '@/components/heading';
+import HeadingSmall from '@/components/heading-small';
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem, type SharedData } from '@/types';
-import { Form, Head, usePage } from '@inertiajs/react';
-import { useEffect, useState } from 'react';
+import { Head, usePage } from '@inertiajs/react';
+import { Monitor, Moon, Sun } from 'lucide-react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+
+type AppearanceOption = 'light' | 'dark' | 'system';
 
 type AdminSettingsProps = {
   appName: string;
+  allowRegistration: boolean;
+  allowAppearanceCustomization: boolean;
+  defaultAppearance: AppearanceOption;
 };
 
 type AdminPageProps = SharedData & {
   csrf_token?: string;
+  errors?: Record<string, string | string[]>;
 };
 
-export default function AdminSettingsIndex({ appName }: AdminSettingsProps) {
+export default function AdminSettingsIndex({
+  appName,
+  allowRegistration: initialAllowRegistration,
+  allowAppearanceCustomization: initialAllowAppearanceCustomization,
+  defaultAppearance: initialDefaultAppearance,
+}: AdminSettingsProps) {
   const { t } = useTranslation();
-  const { availableLocales, locale, availableTimezones, timezone, csrf_token } =
-    usePage<AdminPageProps>().props;
+  const {
+    availableLocales = [],
+    locale,
+    availableTimezones = [],
+    timezone,
+    csrf_token,
+    allowRegistration: sharedAllowRegistration,
+    allowAppearanceCustomization: sharedAllowAppearanceCustomization,
+    defaultAppearance: sharedDefaultAppearance,
+    errors: pageErrors = {},
+  } = usePage<AdminPageProps>().props;
+
   const [selectedLocale, setSelectedLocale] = useState(locale);
-  const [selectedTimezone, setSelectedTimezone] = useState(timezone);
+  const [selectedTimezone, setSelectedTimezone] = useState(
+    timezone ?? availableTimezones[0] ?? '',
+  );
+  const derivedAllowRegistration =
+    typeof sharedAllowRegistration === 'boolean'
+      ? sharedAllowRegistration
+      : initialAllowRegistration;
+  const [allowRegistration, setAllowRegistration] = useState(
+    derivedAllowRegistration,
+  );
+  const derivedAllowAppearanceCustomization =
+    typeof sharedAllowAppearanceCustomization === 'boolean'
+      ? sharedAllowAppearanceCustomization
+      : initialAllowAppearanceCustomization;
+  const [allowAppearanceCustomization, setAllowAppearanceCustomization] =
+    useState(derivedAllowAppearanceCustomization);
+  const derivedDefaultAppearance =
+    typeof sharedDefaultAppearance === 'string' &&
+    ['light', 'dark', 'system'].includes(sharedDefaultAppearance)
+      ? (sharedDefaultAppearance as AppearanceOption)
+      : initialDefaultAppearance;
+  const [defaultAppearance, setDefaultAppearance] = useState<AppearanceOption>(
+    derivedDefaultAppearance,
+  );
 
   useEffect(() => {
     setSelectedLocale(locale);
   }, [locale]);
+
   useEffect(() => {
-    setSelectedTimezone(timezone);
-  }, [timezone]);
+    setSelectedTimezone(timezone ?? availableTimezones[0] ?? '');
+  }, [timezone, availableTimezones]);
+
+  useEffect(() => {
+    setAllowRegistration(derivedAllowRegistration);
+  }, [derivedAllowRegistration]);
+
+  useEffect(() => {
+    setAllowAppearanceCustomization(derivedAllowAppearanceCustomization);
+  }, [derivedAllowAppearanceCustomization]);
+
+  useEffect(() => {
+    setDefaultAppearance(derivedDefaultAppearance);
+  }, [derivedDefaultAppearance]);
+
+  const appearanceOptions = useMemo(
+    () => [
+      {
+        value: 'light' as AppearanceOption,
+        icon: Sun,
+        label: t('admin.settings.default_appearance_light'),
+      },
+      {
+        value: 'dark' as AppearanceOption,
+        icon: Moon,
+        label: t('admin.settings.default_appearance_dark'),
+      },
+      {
+        value: 'system' as AppearanceOption,
+        icon: Monitor,
+        label: t('admin.settings.default_appearance_system'),
+      },
+    ],
+    [t],
+  );
+
+  const getError = (field: string): string | undefined => {
+    const message = (
+      pageErrors as Record<string, string | string[] | undefined>
+    )[field];
+
+    if (Array.isArray(message)) {
+      return message[0];
+    }
+
+    return message;
+  };
+
   const breadcrumbs: BreadcrumbItem[] = [
     {
       title: t('navigation.application_settings'),
@@ -49,121 +143,208 @@ export default function AdminSettingsIndex({ appName }: AdminSettingsProps) {
             description={t('admin.settings.description')}
           />
 
-          <Form
-            {...ApplicationSettingController.update.form()}
-            options={{
-              preserveScroll: true,
-            }}
+          <form
+            action={ApplicationSettingController.update.url()}
+            method="post"
             className="space-y-6 rounded-lg border border-border bg-card p-6 shadow-sm"
           >
-            {({ processing, errors, recentlySuccessful }) => (
-              <>
+            <input type="hidden" name="_method" value="PUT" />
+            <input type="hidden" name="_token" value={csrf_token ?? ''} />
+            <input
+              type="hidden"
+              name="allow_registration"
+              value={allowRegistration ? '1' : '0'}
+            />
+            <input
+              type="hidden"
+              name="allow_appearance_customization"
+              value={allowAppearanceCustomization ? '1' : '0'}
+            />
+            <input
+              type="hidden"
+              name="default_appearance"
+              value={defaultAppearance}
+            />
+
+            <section className="space-y-4">
+              <HeadingSmall
+                title={t('admin.settings.section_general_title')}
+                description={t('admin.settings.section_general_description')}
+              />
+
+              <div className="space-y-2">
+                <Label htmlFor="app_name">{t('common.application_name')}</Label>
+                <Input
+                  id="app_name"
+                  name="app_name"
+                  defaultValue={appName}
+                  placeholder={t('common.application_name_placeholder')}
+                  required
+                  maxLength={255}
+                />
+                <InputError className="mt-1" message={getError('app_name')} />
+                <p className="text-sm text-muted-foreground">
+                  {t('common.application_name_helper')}
+                </p>
+              </div>
+
+              {availableLocales.length > 0 && (
                 <div className="space-y-2">
-                  <Label htmlFor="app_name">
-                    {t('common.application_name')}
+                  <Label htmlFor="locale">
+                    {t('admin.settings.locale_title')}
                   </Label>
-                  <Input
-                    id="app_name"
-                    name="app_name"
-                    defaultValue={appName}
-                    placeholder={t('common.application_name_placeholder')}
-                    required
-                    maxLength={255}
-                    disabled={processing}
-                  />
-                  <InputError className="mt-1" message={errors.app_name} />
                   <p className="text-sm text-muted-foreground">
-                    {t('common.application_name_helper')}
+                    {t('admin.settings.locale_description')}
                   </p>
+                  <select
+                    id="locale"
+                    name="locale"
+                    className="h-10 rounded-md border border-input bg-transparent px-3 text-sm text-foreground shadow-xs transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none"
+                    value={selectedLocale}
+                    onChange={(event) => setSelectedLocale(event.target.value)}
+                    required
+                  >
+                    {availableLocales.map((value) => (
+                      <option key={value} value={value}>
+                        {t(`locales.${value}`)}
+                      </option>
+                    ))}
+                  </select>
+                  <InputError className="mt-1" message={getError('locale')} />
                 </div>
+              )}
 
-                <div className="flex items-center gap-4">
-                  <Button disabled={processing}>
-                    {t('common.save_changes')}
-                  </Button>
-                  {recentlySuccessful && (
-                    <span className="text-sm text-muted-foreground">
-                      {t('common.saved')}
-                    </span>
-                  )}
+              {availableTimezones.length > 0 && (
+                <div className="space-y-2">
+                  <Label htmlFor="timezone">
+                    {t('admin.settings.timezone_title')}
+                  </Label>
+                  <p className="text-sm text-muted-foreground">
+                    {t('admin.settings.timezone_description')}
+                  </p>
+                  <select
+                    id="timezone"
+                    name="timezone"
+                    className="h-10 rounded-md border border-input bg-transparent px-3 text-sm text-foreground shadow-xs transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none"
+                    value={selectedTimezone}
+                    onChange={(event) =>
+                      setSelectedTimezone(event.target.value)
+                    }
+                    required
+                  >
+                    {availableTimezones.map((value) => (
+                      <option key={value} value={value}>
+                        {value}
+                      </option>
+                    ))}
+                  </select>
+                  <InputError className="mt-1" message={getError('timezone')} />
                 </div>
-              </>
-            )}
-          </Form>
+              )}
+            </section>
 
-          {availableLocales && availableLocales.length > 0 && (
-            <form
-              action={ApplicationSettingController.updateLocale.url()}
-              method="post"
-              className="space-y-4 rounded-lg border border-border bg-card p-6 shadow-sm"
-            >
-              <input type="hidden" name="_token" value={csrf_token ?? ''} />
+            <hr className="border-border" />
+
+            <section className="space-y-4">
+              <HeadingSmall
+                title={t('admin.settings.section_access_title')}
+                description={t('admin.settings.section_access_description')}
+              />
 
               <div className="space-y-2">
-                <Heading
-                  title={t('admin.settings.locale_title')}
-                  description={t('admin.settings.locale_description')}
+                <div className="flex items-center gap-3">
+                  <Checkbox
+                    id="allow_registration"
+                    checked={allowRegistration}
+                    onCheckedChange={(checked) =>
+                      setAllowRegistration(checked === true)
+                    }
+                  />
+                  <Label
+                    htmlFor="allow_registration"
+                    className="text-sm text-foreground"
+                  >
+                    {t('admin.settings.allow_registration_label')}
+                  </Label>
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  {t('admin.settings.allow_registration_description')}
+                </p>
+                <InputError
+                  className="mt-1"
+                  message={getError('allow_registration')}
                 />
-                <Label htmlFor="locale">
-                  {t('admin.settings.locale_label')}
-                </Label>
-                <select
-                  id="locale"
-                  name="locale"
-                  className="h-10 rounded-md border border-input bg-transparent px-3 text-sm text-foreground shadow-xs transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none"
-                  value={selectedLocale}
-                  onChange={(event) => setSelectedLocale(event.target.value)}
-                >
-                  {availableLocales.map((value) => (
-                    <option key={value} value={value}>
-                      {t(`locales.${value}`)}
-                    </option>
-                  ))}
-                </select>
               </div>
+            </section>
 
-              <div className="flex items-center gap-4">
-                <Button type="submit">{t('common.save')}</Button>
-              </div>
-            </form>
-          )}
+            <hr className="border-border" />
 
-          {availableTimezones && availableTimezones.length > 0 && (
-            <form
-              action={ApplicationSettingController.updateTimezone.url()}
-              method="post"
-              className="space-y-4 rounded-lg border border-border bg-card p-6 shadow-sm"
-            >
-              <input type="hidden" name="_token" value={csrf_token ?? ''} />
+            <section className="space-y-4">
+              <HeadingSmall
+                title={t('admin.settings.section_appearance_title')}
+                description={t('admin.settings.section_appearance_description')}
+              />
 
               <div className="space-y-2">
-                <Heading
-                  title={t('admin.settings.timezone_title')}
-                  description={t('admin.settings.timezone_description')}
+                <div className="flex items-center gap-3">
+                  <Checkbox
+                    id="allow_appearance_customization"
+                    checked={allowAppearanceCustomization}
+                    onCheckedChange={(checked) =>
+                      setAllowAppearanceCustomization(checked === true)
+                    }
+                  />
+                  <Label
+                    htmlFor="allow_appearance_customization"
+                    className="text-sm text-foreground"
+                  >
+                    {t('admin.settings.allow_appearance_label')}
+                  </Label>
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  {t('admin.settings.allow_appearance_description')}
+                </p>
+                <InputError
+                  className="mt-1"
+                  message={getError('allow_appearance_customization')}
                 />
-                <Label htmlFor="timezone">
-                  {t('admin.settings.timezone_label')}
-                </Label>
-                <select
-                  id="timezone"
-                  name="timezone"
-                  className="h-10 rounded-md border border-input bg-transparent px-3 text-sm text-foreground shadow-xs transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none"
-                  value={selectedTimezone}
-                  onChange={(event) => setSelectedTimezone(event.target.value)}
-                >
-                  {availableTimezones.map((value) => (
-                    <option key={value} value={value}>
-                      {value}
-                    </option>
-                  ))}
-                </select>
               </div>
 
-              <div className="flex items-center gap-4">
-                <Button type="submit">{t('common.save')}</Button>
+              <div className="space-y-2">
+                <Label htmlFor="default_appearance">
+                  {t('admin.settings.default_appearance_title')}
+                </Label>
+                <p className="text-sm text-muted-foreground">
+                  {t('admin.settings.default_appearance_description')}
+                </p>
+                <div className="inline-flex gap-1 rounded-lg bg-neutral-100 p-1 dark:bg-neutral-800">
+                  {appearanceOptions.map(({ value, icon: Icon, label }) => (
+                    <button
+                      key={value}
+                      type="button"
+                      onClick={() => setDefaultAppearance(value)}
+                      className={`flex items-center rounded-md px-3.5 py-1.5 text-sm transition-colors ${
+                        defaultAppearance === value
+                          ? 'bg-white shadow-xs dark:bg-neutral-700 dark:text-neutral-100'
+                          : 'text-neutral-500 hover:bg-neutral-200/60 hover:text-black dark:text-neutral-400 dark:hover:bg-neutral-700/60'
+                      }`}
+                    >
+                      <Icon className="-ml-1 h-4 w-4" />
+                      <span className="ml-1.5">{label}</span>
+                    </button>
+                  ))}
+                </div>
+                <InputError
+                  className="mt-1"
+                  message={getError('default_appearance')}
+                />
               </div>
-            </form>
-          )}
+            </section>
+
+            <div className="flex items-center gap-4">
+              <Button type="submit">{t('common.save_changes')}</Button>
+            </div>
+          </form>
         </div>
       </div>
     </AppLayout>

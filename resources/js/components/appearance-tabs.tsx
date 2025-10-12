@@ -7,7 +7,8 @@ export default function AppearanceToggleTab({
   className = '',
   ...props
 }: HTMLAttributes<HTMLDivElement>) {
-  const { appearance, updateAppearance } = useAppearance();
+  const { appearance, updateAppearance, allowAppearanceCustomization } =
+    useAppearance();
 
   const tabs: { value: Appearance; icon: LucideIcon; label: string }[] = [
     { value: 'light', icon: Sun, label: 'Light' },
@@ -26,12 +27,17 @@ export default function AppearanceToggleTab({
       {tabs.map(({ value, icon: Icon, label }) => (
         <button
           key={value}
-          onClick={() => updateAppearance(value)}
+          onClick={() =>
+            allowAppearanceCustomization && updateAppearance(value)
+          }
+          disabled={!allowAppearanceCustomization}
           className={cn(
             'flex items-center rounded-md px-3.5 py-1.5 transition-colors',
             appearance === value
               ? 'bg-white shadow-xs dark:bg-neutral-700 dark:text-neutral-100'
               : 'text-neutral-500 hover:bg-neutral-200/60 hover:text-black dark:text-neutral-400 dark:hover:bg-neutral-700/60',
+            !allowAppearanceCustomization &&
+              'cursor-not-allowed opacity-60 hover:bg-transparent hover:text-inherit dark:hover:bg-transparent',
           )}
         >
           <Icon className="-ml-1 h-4 w-4" />

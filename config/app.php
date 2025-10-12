@@ -89,6 +89,10 @@ return [
         'UTC',
     ],
 
+    'allow_registration' => (bool) env('APP_ALLOW_REGISTRATION', true),
+    'allow_appearance_customization' => (bool) env('APP_ALLOW_APPEARANCE_CUSTOMIZATION', true),
+    'default_appearance' => env('APP_DEFAULT_APPEARANCE', 'light'),
+
     'available_locales' => [
         'ja',
         'en',

@@ -31,8 +31,6 @@ Route::middleware(['auth', 'verified', 'admin'])
             ->name('settings.edit');
         Route::put('settings', [ApplicationSettingController::class, 'update'])
             ->name('settings.update');
-        Route::post('settings/locale', [ApplicationSettingController::class, 'updateLocale'])
-            ->name('settings.locale');
         Route::post('settings/timezone', [ApplicationSettingController::class, 'updateTimezone'])
             ->name('settings.timezone');
 

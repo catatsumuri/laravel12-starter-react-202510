@@ -4,7 +4,7 @@ import { Head, Link, usePage } from '@inertiajs/react';
 import { useTranslation } from 'react-i18next';
 
 export default function Welcome() {
-  const { auth } = usePage<SharedData>().props;
+  const { auth, allowRegistration = false } = usePage<SharedData>().props;
   const { t } = useTranslation();
   const description = t('welcome.description').split('\n');
 
@@ -35,12 +35,14 @@ export default function Welcome() {
                 >
                   {t('welcome.cta_login')}
                 </Link>
-                <Link
-                  href={register()}
-                  className="inline-block rounded-sm border border-[#19140035] px-5 py-1.5 text-sm leading-normal text-[#1b1b18] hover:border-[#1915014a] dark:border-[#3E3E3A] dark:text-[#EDEDEC] dark:hover:border-[#62605b]"
-                >
-                  {t('welcome.cta_register')}
-                </Link>
+                {allowRegistration && (
+                  <Link
+                    href={register()}
+                    className="inline-block rounded-sm border border-[#19140035] px-5 py-1.5 text-sm leading-normal text-[#1b1b18] hover:border-[#1915014a] dark:border-[#3E3E3A] dark:text-[#EDEDEC] dark:hover:border-[#62605b]"
+                  >
+                    {t('welcome.cta_register')}
+                  </Link>
+                )}
               </>
             )}
           </nav>

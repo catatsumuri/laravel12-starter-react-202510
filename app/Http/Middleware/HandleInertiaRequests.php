@@ -58,6 +58,9 @@ class HandleInertiaRequests extends Middleware
             'availableLocales' => config('app.available_locales', []),
             'timezone' => config('app.timezone'),
             'availableTimezones' => config('app.available_timezones', []),
+            'allowRegistration' => config('app.allow_registration'),
+            'allowAppearanceCustomization' => config('app.allow_appearance_customization'),
+            'defaultAppearance' => config('app.default_appearance', 'light'),
             'translations' => $this->frontendTranslations($locale),
             'fallbackTranslations' => $fallbackLocale !== $locale
                 ? $this->frontendTranslations($fallbackLocale)

@@ -40,6 +40,9 @@ export interface SharedData {
   availableLocales?: string[];
   timezone?: string;
   availableTimezones?: string[];
+  allowRegistration?: boolean;
+  allowAppearanceCustomization?: boolean;
+  defaultAppearance?: 'light' | 'dark' | 'system';
   quote: { message: string; author: string };
   auth: Auth;
   sidebarOpen: boolean;
