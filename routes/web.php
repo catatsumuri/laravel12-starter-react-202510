@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\ApplicationSettingController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\NotificationController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -9,6 +10,8 @@ use Inertia\Inertia;
 Route::get('/', function () {
     return Inertia::render('welcome');
 })->name('home');
+
+Route::post('locale', [LocaleController::class, 'update'])->name('locale.update');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', function () {

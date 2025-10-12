@@ -45,6 +45,7 @@ return [
         'user_menu' => [
             'settings' => 'Settings',
             'logout' => 'Log out',
+            'language_label' => 'Language',
         ],
         'login' => [
             'title' => 'Log in to your account',
@@ -176,6 +177,9 @@ return [
         'settings' => [
             'title' => 'Application settings',
             'description' => 'Update the core application configuration.',
+            'locale_title' => 'Interface language',
+            'locale_description' => 'Choose which language the application should use.',
+            'locale_label' => 'Select language',
         ],
         'users' => [
             'title' => 'Users',
@@ -243,5 +247,9 @@ return [
         'read_documentation' => 'Read the',
         'documentation_link' => 'Documentation',
         'deploy_now' => 'Deploy now',
+    ],
+    'locales' => [
+        'en' => 'English',
+        'ja' => 'Japanese',
     ],
 ];

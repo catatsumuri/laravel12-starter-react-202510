@@ -45,6 +45,7 @@ return [
         'user_menu' => [
             'settings' => '設定',
             'logout' => 'ログアウト',
+            'language_label' => '言語',
         ],
         'login' => [
             'title' => 'アカウントにログイン',
@@ -176,6 +177,9 @@ return [
         'settings' => [
             'title' => 'アプリケーション設定',
             'description' => 'アプリケーションの主要な設定を更新します。',
+            'locale_title' => '表示言語',
+            'locale_description' => 'アプリケーションで使用する言語を選択してください。',
+            'locale_label' => '言語を選択',
         ],
         'users' => [
             'title' => 'ユーザー',
@@ -243,5 +247,9 @@ return [
         'read_documentation' => 'まずは',
         'documentation_link' => 'ドキュメントを確認する',
         'deploy_now' => '今すぐデプロイ',
+    ],
+    'locales' => [
+        'en' => 'English',
+        'ja' => '日本語',
     ],
 ];
