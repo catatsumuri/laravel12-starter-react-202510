@@ -36,7 +36,7 @@ export const formatDateTimeString = (
       ...options,
       timeZone: intlTimezone,
     });
-  } catch (error) {
+  } catch {
     return value;
   }
 };

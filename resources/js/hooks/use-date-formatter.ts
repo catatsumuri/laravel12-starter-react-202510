@@ -7,9 +7,6 @@ import {
 } from '@/lib/datetime';
 import { type SharedData } from '@/types';
 
-const optionsKey = (options?: Partial<Intl.DateTimeFormatOptions>) =>
-  JSON.stringify(options ?? {});
-
 export const useDateFormatter = (
   options?: Partial<Intl.DateTimeFormatOptions>,
 ) => {
@@ -24,7 +21,7 @@ export const useDateFormatter = (
       ...DEFAULT_DATETIME_FORMAT_OPTIONS,
       ...options,
     } satisfies Intl.DateTimeFormatOptions;
-  }, [optionsKey(options)]);
+  }, [options]);
 
   return useCallback(
     (value?: string | null) =>
