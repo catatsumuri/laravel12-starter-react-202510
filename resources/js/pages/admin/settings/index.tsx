@@ -101,7 +101,7 @@ export default function AdminSettingsIndex({ appName }: AdminSettingsProps) {
               <select
                 id="locale"
                 name="locale"
-                className="h-10 rounded-md border border-input bg-transparent px-3 text-sm text-foreground shadow-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                className="h-10 rounded-md border border-input bg-transparent px-3 text-sm text-foreground shadow-xs transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none"
                 value={selectedLocale}
                 onChange={(event) => setSelectedLocale(event.target.value)}
               >
@@ -114,9 +114,7 @@ export default function AdminSettingsIndex({ appName }: AdminSettingsProps) {
             </div>
 
             <div className="flex items-center gap-4">
-              <Button type="submit">
-                {t('common.save')}
-              </Button>
+              <Button type="submit">{t('common.save')}</Button>
             </div>
           </form>
         )}

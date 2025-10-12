@@ -84,7 +84,7 @@ export default function ShowUser({
           </h3>
           <div className="grid gap-4">
             <div>
-              <p className="text-xs uppercase text-muted-foreground">
+              <p className="text-xs text-muted-foreground uppercase">
                 {t('admin.users.show.name_label')}
               </p>
               <p className="text-base font-medium text-foreground">
@@ -92,13 +92,13 @@ export default function ShowUser({
               </p>
             </div>
             <div>
-              <p className="text-xs uppercase text-muted-foreground">
+              <p className="text-xs text-muted-foreground uppercase">
                 {t('admin.users.show.email_label')}
               </p>
               <p className="text-base text-foreground">{user.email}</p>
             </div>
             <div>
-              <p className="text-xs uppercase text-muted-foreground">
+              <p className="text-xs text-muted-foreground uppercase">
                 {t('admin.users.show.roles_label')}
               </p>
               <div className="mt-2 flex flex-wrap gap-2">
@@ -124,7 +124,7 @@ export default function ShowUser({
           </h3>
           <div className="grid gap-4">
             <div>
-              <p className="text-xs uppercase text-muted-foreground">
+              <p className="text-xs text-muted-foreground uppercase">
                 {t('admin.users.show.email_verification_label')}
               </p>
               <p className="text-base text-foreground">
@@ -136,7 +136,7 @@ export default function ShowUser({
               </p>
             </div>
             <div>
-              <p className="text-xs uppercase text-muted-foreground">
+              <p className="text-xs text-muted-foreground uppercase">
                 {t('admin.users.show.created_at_label')}
               </p>
               <p className="text-base text-foreground">
@@ -144,7 +144,7 @@ export default function ShowUser({
               </p>
             </div>
             <div>
-              <p className="text-xs uppercase text-muted-foreground">
+              <p className="text-xs text-muted-foreground uppercase">
                 {t('admin.users.show.updated_at_label')}
               </p>
               <p className="text-base text-foreground">
@@ -152,7 +152,7 @@ export default function ShowUser({
               </p>
             </div>
             <div>
-              <p className="text-xs uppercase text-muted-foreground">
+              <p className="text-xs text-muted-foreground uppercase">
                 {t('admin.users.show.account_state_label')}
               </p>
               <p className="text-base text-foreground">

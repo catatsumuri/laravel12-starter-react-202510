@@ -180,6 +180,7 @@ return [
             'locale_title' => '表示言語',
             'locale_description' => 'アプリケーションで使用する言語を選択してください。',
             'locale_label' => '言語を選択',
+            'locale_updated' => '言語を更新しました。',
         ],
         'users' => [
             'title' => 'ユーザー',

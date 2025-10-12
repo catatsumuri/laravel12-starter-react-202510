@@ -64,7 +64,9 @@ export default function ForgotPassword({ status }: { status?: string }) {
 
         <div className="text-center text-sm text-muted-foreground">
           <span>{t('auth.forgot_password.return_prompt')}</span>{' '}
-          <TextLink href={login()}>{t('auth.forgot_password.return_link')}</TextLink>
+          <TextLink href={login()}>
+            {t('auth.forgot_password.return_link')}
+          </TextLink>
         </div>
       </div>
     </AuthLayout>

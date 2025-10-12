@@ -11,8 +11,8 @@ import {
 } from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
 import { Form } from '@inertiajs/react';
-import type { ComponentProps } from 'react';
 import { Trash } from 'lucide-react';
+import type { ComponentProps } from 'react';
 import { useTranslation } from 'react-i18next';
 
 type TriggerButtonProps = ComponentProps<typeof Button> & {
@@ -35,22 +35,15 @@ export default function AdminUserDeleteDialog({
   confirmLabel,
 }: AdminUserDeleteDialogProps) {
   const { t } = useTranslation();
-  const {
-    children,
-    className,
-    variant,
-    size,
-    ...restTriggerProps
-  } = triggerProps ?? {};
+  const { children, className, variant, size, ...restTriggerProps } =
+    triggerProps ?? {};
 
-  const triggerContent =
-    children ??
-    (
-      <>
-        <Trash className="size-4" />
-        {t('admin.users.delete.trigger')}
-      </>
-    );
+  const triggerContent = children ?? (
+    <>
+      <Trash className="size-4" />
+      {t('admin.users.delete.trigger')}
+    </>
+  );
 
   const resolvedConfirmLabel =
     confirmLabel ?? t('admin.users.delete.confirm_label');

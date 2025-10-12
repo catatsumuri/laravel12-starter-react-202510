@@ -12,9 +12,7 @@ class SystemNotification extends Notification
     /**
      * @param  array<string, mixed>  $payload
      */
-    public function __construct(private array $payload)
-    {
-    }
+    public function __construct(private array $payload) {}
 
     /**
      * @return array<int, string>

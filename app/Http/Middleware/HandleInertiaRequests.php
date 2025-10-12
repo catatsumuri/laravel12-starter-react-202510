@@ -55,7 +55,7 @@ class HandleInertiaRequests extends Middleware
             'name' => config('app.name'),
             'locale' => $locale,
             'fallbackLocale' => $fallbackLocale,
-             'availableLocales' => config('app.available_locales', []),
+            'availableLocales' => config('app.available_locales', []),
             'translations' => $this->frontendTranslations($locale),
             'fallbackTranslations' => $fallbackLocale !== $locale
                 ? $this->frontendTranslations($fallbackLocale)

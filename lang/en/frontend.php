@@ -136,7 +136,7 @@ return [
             'breadcrumb' => 'Password settings',
             'head_title' => 'Password settings',
             'title' => 'Update password',
-            'description' => "Ensure your account is using a long, random password to stay secure",
+            'description' => 'Ensure your account is using a long, random password to stay secure',
             'save_button' => 'Save password',
             'saved_message' => 'Saved',
         ],
@@ -180,6 +180,7 @@ return [
             'locale_title' => 'Interface language',
             'locale_description' => 'Choose which language the application should use.',
             'locale_label' => 'Select language',
+            'locale_updated' => 'Language updated.',
         ],
         'users' => [
             'title' => 'Users',

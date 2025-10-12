@@ -44,4 +44,3 @@ class Setting extends Model
         return sprintf('settings.%s', $key);
     }
 }
-

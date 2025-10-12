@@ -61,7 +61,9 @@ export default function Password() {
             {({ errors, processing, recentlySuccessful }) => (
               <>
                 <div className="grid gap-2">
-                  <Label htmlFor="current_password">{t('common.current_password')}</Label>
+                  <Label htmlFor="current_password">
+                    {t('common.current_password')}
+                  </Label>
 
                   <Input
                     id="current_password"

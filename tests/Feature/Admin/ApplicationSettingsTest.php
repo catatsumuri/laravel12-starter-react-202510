@@ -65,4 +65,3 @@ it('updates the application name', function () {
     expect(Setting::value('app.name'))->toBe('Custom Admin Portal')
         ->and(config('app.name'))->toBe('Custom Admin Portal');
 });
-

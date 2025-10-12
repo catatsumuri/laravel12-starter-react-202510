@@ -51,4 +51,3 @@ export const configureI18n = (
     void i18next.changeLanguage(locale);
   }
 };
-

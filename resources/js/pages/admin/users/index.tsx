@@ -48,7 +48,10 @@ export default function UsersIndex({ users }: { users: UsersResponse }) {
           description={t('admin.users.description')}
         />
         <Button asChild>
-          <Link href={AdminUserController.create.url()} className="inline-flex items-center gap-2">
+          <Link
+            href={AdminUserController.create.url()}
+            className="inline-flex items-center gap-2"
+          >
             <Plus className="size-4" />
             {t('admin.users.new_user')}
           </Link>

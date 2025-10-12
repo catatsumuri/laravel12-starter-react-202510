@@ -42,7 +42,9 @@ export default function EditUser({
 
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
-      <Head title={t('admin.users.edit_user.head_title', { name: user.name })} />
+      <Head
+        title={t('admin.users.edit_user.head_title', { name: user.name })}
+      />
 
       <div className="flex items-center justify-between">
         <Heading
@@ -99,7 +101,9 @@ export default function EditUser({
                     id="password"
                     type="password"
                     name="password"
-                    placeholder={t('admin.users.edit_user.password_placeholder')}
+                    placeholder={t(
+                      'admin.users.edit_user.password_placeholder',
+                    )}
                   />
                   <InputError message={errors.password} />
                 </div>
@@ -112,7 +116,9 @@ export default function EditUser({
                     id="password_confirmation"
                     type="password"
                     name="password_confirmation"
-                    placeholder={t('admin.users.edit_user.confirm_password_placeholder')}
+                    placeholder={t(
+                      'admin.users.edit_user.confirm_password_placeholder',
+                    )}
                   />
                   <InputError message={errors.password_confirmation} />
                 </div>
@@ -125,7 +131,7 @@ export default function EditUser({
                   name="role"
                   defaultValue={user.role ?? ''}
                   required
-                  className="h-10 rounded-md border border-input bg-transparent px-3 text-sm text-foreground shadow-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                  className="h-10 rounded-md border border-input bg-transparent px-3 text-sm text-foreground shadow-xs transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none"
                 >
                   <option value="" disabled>
                     {t('admin.users.edit_user.role_placeholder')}

@@ -44,6 +44,6 @@ class ApplicationSettingController extends Controller
 
         $request->session()->put('locale', $validated['locale']);
 
-        return back()->with('success', 'Language updated.');
+        return back()->with('success', __('admin.settings.locale_updated'));
     }
 }

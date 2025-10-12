@@ -68,11 +68,11 @@ export default function TwoFactor({
               <div className="relative inline">
                 <Form {...disable.form()}>
                   {({ processing }) => (
-                      <Button
-                        variant="destructive"
-                        type="submit"
-                        disabled={processing}
-                      >
+                    <Button
+                      variant="destructive"
+                      type="submit"
+                      disabled={processing}
+                    >
                       <ShieldBan /> {t('settings.two_factor.disable_button')}
                     </Button>
                   )}
@@ -98,13 +98,13 @@ export default function TwoFactor({
                   <Form
                     {...enable.form()}
                     onSuccess={() => setShowSetupModal(true)}
-                    >
-                      {({ processing }) => (
-                        <Button type="submit" disabled={processing}>
-                          <ShieldCheck />
-                          {t('settings.two_factor.enable_button')}
-                        </Button>
-                      )}
+                  >
+                    {({ processing }) => (
+                      <Button type="submit" disabled={processing}>
+                        <ShieldCheck />
+                        {t('settings.two_factor.enable_button')}
+                      </Button>
+                    )}
                   </Form>
                 )}
               </div>

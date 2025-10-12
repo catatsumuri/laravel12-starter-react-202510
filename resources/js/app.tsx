@@ -12,9 +12,7 @@ const initialDocumentTitle =
     ? document.querySelector('title[inertia]')?.textContent?.trim()
     : null;
 const defaultAppName =
-  initialDocumentTitle ||
-  import.meta.env.VITE_APP_NAME ||
-  'Laravel';
+  initialDocumentTitle || import.meta.env.VITE_APP_NAME || 'Laravel';
 
 const resolveAppName = (props: unknown): string | null => {
   if (!props || typeof props !== 'object') {
@@ -67,8 +65,7 @@ router.on('navigate', (event) => {
 });
 
 createInertiaApp({
-  title: (title) =>
-    title ? `${title} - ${currentAppName}` : currentAppName,
+  title: (title) => (title ? `${title} - ${currentAppName}` : currentAppName),
   resolve: (name) =>
     resolvePageComponent(
       `./pages/${name}.tsx`,

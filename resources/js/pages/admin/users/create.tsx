@@ -94,7 +94,9 @@ export default function CreateUser({ roles }: { roles: RoleOption[] }) {
                 </div>
 
                 <div className="grid gap-2">
-                  <Label htmlFor="password_confirmation">{t('common.confirm_password')}</Label>
+                  <Label htmlFor="password_confirmation">
+                    {t('common.confirm_password')}
+                  </Label>
                   <Input
                     id="password_confirmation"
                     type="password"
@@ -113,7 +115,7 @@ export default function CreateUser({ roles }: { roles: RoleOption[] }) {
                   name="role"
                   defaultValue={defaultRole}
                   required
-                  className="h-10 rounded-md border border-input bg-transparent px-3 text-sm text-foreground shadow-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                  className="h-10 rounded-md border border-input bg-transparent px-3 text-sm text-foreground shadow-xs transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none"
                 >
                   <option value="" disabled>
                     {t('admin.users.create.role_placeholder')}
