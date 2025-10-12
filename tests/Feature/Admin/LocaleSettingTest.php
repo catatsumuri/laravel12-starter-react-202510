@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Setting;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Spatie\Permission\Models\Role;
@@ -33,5 +34,32 @@ it('prevents non-admin users from updating the locale', function () {
 
     $this->actingAs($user)
         ->post(route('admin.settings.locale'), ['locale' => 'en'])
+        ->assertForbidden();
+});
+
+it('allows admins to update the timezone', function () {
+    $admin = User::factory()->create();
+    $admin->assignRole('admin');
+
+    Setting::updateValue('app.timezone', config('app.timezone'));
+    dump('before', Setting::all()->toArray());
+
+    $this->actingAs($admin)
+        ->from(route('admin.settings.edit'))
+        ->post(route('admin.settings.timezone'), ['timezone' => 'UTC'])
+        ->assertRedirect(route('admin.settings.edit'))
+        ->assertSessionHasNoErrors();
+
+    expect(Setting::value('app.timezone'))->toBe('UTC')
+        ->and(config('app.timezone'))->toBe('UTC')
+        ->and(date_default_timezone_get())->toBe('UTC');
+});
+
+it('prevents non-admin users from updating the timezone', function () {
+    $user = User::factory()->create();
+    $user->assignRole('user');
+
+    $this->actingAs($user)
+        ->post(route('admin.settings.timezone'), ['timezone' => 'UTC'])
         ->assertForbidden();
 });

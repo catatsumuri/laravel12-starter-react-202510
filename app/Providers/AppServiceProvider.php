@@ -25,10 +25,13 @@ class AppServiceProvider extends ServiceProvider
             return;
         }
 
-        $appName = Setting::value('app.name');
-
-        if ($appName) {
+        if ($appName = Setting::value('app.name')) {
             config(['app.name' => $appName]);
+        }
+
+        if ($timezone = Setting::value('app.timezone')) {
+            config(['app.timezone' => $timezone]);
+            date_default_timezone_set($timezone);
         }
     }
 }

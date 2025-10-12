@@ -65,7 +65,7 @@ return [
     |
     */
 
-    'timezone' => 'UTC',
+    'timezone' => env('APP_TIMEZONE', 'Asia/Tokyo'),
 
     /*
     |--------------------------------------------------------------------------
@@ -83,6 +83,11 @@ return [
     'fallback_locale' => env('APP_FALLBACK_LOCALE', 'en'),
 
     'faker_locale' => env('APP_FAKER_LOCALE', 'ja_JP'),
+
+    'available_timezones' => [
+        'Asia/Tokyo',
+        'UTC',
+    ],
 
     'available_locales' => [
         'ja',
