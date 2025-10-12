@@ -5,14 +5,28 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import AppLayout from '@/layouts/app-layout';
-import LocaleController from '@/actions/App/Http/Controllers/LocaleController';
 import { type BreadcrumbItem, type SharedData } from '@/types';
 import { Form, Head, usePage } from '@inertiajs/react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-export default function AdminSettingsIndex({ appName }: { appName: string }) {
+type AdminSettingsProps = {
+  appName: string;
+};
+
+type AdminPageProps = SharedData & {
+  csrf_token?: string;
+};
+
+export default function AdminSettingsIndex({ appName }: AdminSettingsProps) {
   const { t } = useTranslation();
-  const { availableLocales, locale } = usePage<SharedData>().props;
+  const { availableLocales, locale, csrf_token } =
+    usePage<AdminPageProps>().props;
+  const [selectedLocale, setSelectedLocale] = useState(locale);
+
+  useEffect(() => {
+    setSelectedLocale(locale);
+  }, [locale]);
   const breadcrumbs: BreadcrumbItem[] = [
     {
       title: t('navigation.application_settings'),
@@ -71,44 +85,40 @@ export default function AdminSettingsIndex({ appName }: { appName: string }) {
         </Form>
 
         {availableLocales && availableLocales.length > 0 && (
-          <Form
-            {...LocaleController.update.form()}
-            options={{
-              preserveScroll: true,
-            }}
+          <form
+            action={ApplicationSettingController.updateLocale.url()}
+            method="post"
             className="space-y-4 rounded-lg border border-border bg-card p-6 shadow-sm"
           >
-            {({ processing }) => (
-              <>
-                <div className="space-y-2">
-                  <Heading
-                    title={t('admin.settings.locale_title')}
-                    description={t('admin.settings.locale_description')}
-                  />
-                  <Label htmlFor="locale">{t('admin.settings.locale_label')}</Label>
-                  <select
-                    id="locale"
-                    name="locale"
-                    defaultValue={locale}
-                    className="h-10 rounded-md border border-input bg-transparent px-3 text-sm text-foreground shadow-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                    disabled={processing}
-                  >
-                    {availableLocales.map((value) => (
-                      <option key={value} value={value}>
-                        {t(`locales.${value}`)}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+            <input type="hidden" name="_token" value={csrf_token ?? ''} />
 
-                <div className="flex items-center gap-4">
-                  <Button disabled={processing} type="submit">
-                    {t('common.save')}
-                  </Button>
-                </div>
-              </>
-            )}
-          </Form>
+            <div className="space-y-2">
+              <Heading
+                title={t('admin.settings.locale_title')}
+                description={t('admin.settings.locale_description')}
+              />
+              <Label htmlFor="locale">{t('admin.settings.locale_label')}</Label>
+              <select
+                id="locale"
+                name="locale"
+                className="h-10 rounded-md border border-input bg-transparent px-3 text-sm text-foreground shadow-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                value={selectedLocale}
+                onChange={(event) => setSelectedLocale(event.target.value)}
+              >
+                {availableLocales.map((value) => (
+                  <option key={value} value={value}>
+                    {t(`locales.${value}`)}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="flex items-center gap-4">
+              <Button type="submit">
+                {t('common.save')}
+              </Button>
+            </div>
+          </form>
         )}
       </div>
     </AppLayout>

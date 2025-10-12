@@ -60,6 +60,7 @@ class HandleInertiaRequests extends Middleware
             'fallbackTranslations' => $fallbackLocale !== $locale
                 ? $this->frontendTranslations($fallbackLocale)
                 : [],
+            'csrf_token' => csrf_token(),
             'quote' => ['message' => trim($message), 'author' => trim($author)],
             'auth' => [
                 'user' => $user,

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Setting;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -32,5 +33,17 @@ class ApplicationSettingController extends Controller
 
         return back()->with('success', 'Application name updated.');
     }
-}
 
+    public function updateLocale(Request $request): RedirectResponse
+    {
+        $availableLocales = config('app.available_locales', []);
+
+        $validated = $request->validate([
+            'locale' => ['required', 'string', Rule::in($availableLocales)],
+        ]);
+
+        $request->session()->put('locale', $validated['locale']);
+
+        return back()->with('success', 'Language updated.');
+    }
+}
