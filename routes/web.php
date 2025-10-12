@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\ApplicationSettingController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\NotificationController;
 use Illuminate\Support\Facades\Route;
@@ -26,6 +27,13 @@ Route::middleware(['auth', 'verified', 'admin'])
     ->prefix('admin')
     ->name('admin.')
     ->group(function () {
+        Route::get('settings', [ApplicationSettingController::class, 'edit'])
+            ->name('settings.edit');
+        Route::put('settings', [ApplicationSettingController::class, 'update'])
+            ->name('settings.update');
+        Route::post('settings/locale', [ApplicationSettingController::class, 'updateLocale'])
+            ->name('settings.locale');
+
         Route::resource('users', UserController::class);
     });
 

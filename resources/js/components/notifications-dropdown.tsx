@@ -1,26 +1,28 @@
-import { useEffect, useMemo, useState } from 'react';
 import { AlertCircle, Bell, Check, CheckCircle, Info, X } from 'lucide-react';
+import { useEffect, useMemo, useState } from 'react';
 
-import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { cn } from '@/lib/utils';
+import {
+  destroy as deleteNotification,
+  readAll as markAllNotificationsRead,
+  read as markNotificationRead,
+} from '@/routes/notifications';
 import { type Notification, type SharedData } from '@/types';
 import { router, usePage } from '@inertiajs/react';
-import {
-  read as markNotificationRead,
-  readAll as markAllNotificationsRead,
-  destroy as deleteNotification,
-} from '@/routes/notifications';
+import { useTranslation } from 'react-i18next';
 
 export function NotificationsDropdown({
   buttonClassName,
 }: {
   buttonClassName?: string;
 }) {
+  const { t } = useTranslation();
   const page = usePage<SharedData>();
   const sharedNotifications = useMemo(() => {
     const data = page.props.notifications;
@@ -42,8 +44,9 @@ export function NotificationsDropdown({
     );
   }, [sharedNotifications]);
 
-  const unreadCount = notifications.filter((notification) => !notification.read)
-    .length;
+  const unreadCount = notifications.filter(
+    (notification) => !notification.read,
+  ).length;
 
   const markAsRead = (id: string) => {
     const previous = notifications.map((notification) => ({ ...notification }));
@@ -120,7 +123,7 @@ export function NotificationsDropdown({
         >
           <Bell className="size-4" />
           {unreadCount > 0 && (
-            <span className="absolute -right-0.5 -top-0.5 flex size-4 items-center justify-center rounded-full bg-destructive text-[9px] font-bold text-destructive-foreground animate-pulse">
+            <span className="absolute -top-0.5 -right-0.5 flex size-4 animate-pulse items-center justify-center rounded-full bg-destructive text-[9px] font-bold text-destructive-foreground">
               {unreadCount > 9 ? '9+' : unreadCount}
             </span>
           )}
@@ -132,7 +135,9 @@ export function NotificationsDropdown({
       >
         <div className="flex items-center justify-between border-b border-border px-4 py-3">
           <div className="flex items-center gap-2">
-            <h3 className="text-sm font-semibold text-foreground">Notifications</h3>
+            <h3 className="text-sm font-semibold text-foreground">
+              {t('notifications.dropdown.title')}
+            </h3>
             {unreadCount > 0 && (
               <span className="flex size-5 items-center justify-center rounded-full bg-destructive text-[10px] font-bold text-destructive-foreground">
                 {unreadCount}
@@ -146,7 +151,7 @@ export function NotificationsDropdown({
               className="h-7 text-xs"
               onClick={markAllAsRead}
             >
-              Mark all as read
+              {t('notifications.dropdown.mark_all')}
             </Button>
           )}
         </div>
@@ -156,7 +161,7 @@ export function NotificationsDropdown({
             <div className="flex flex-col items-center justify-center py-12 text-center">
               <Bell className="size-12 text-muted-foreground/50" />
               <p className="mt-2 text-sm text-muted-foreground">
-                You have no notifications
+                {t('notifications.dropdown.empty')}
               </p>
             </div>
           ) : (
@@ -171,7 +176,7 @@ export function NotificationsDropdown({
                   <div className="mt-0.5">{renderIcon(notification.type)}</div>
                   <div className="min-w-0 flex-1 space-y-1">
                     <div className="flex items-start justify-between gap-2">
-                      <p className="text-sm font-medium leading-tight text-foreground">
+                      <p className="text-sm leading-tight font-medium text-foreground">
                         {notification.title}
                       </p>
                       {!notification.read && (
@@ -210,18 +215,6 @@ export function NotificationsDropdown({
             </div>
           )}
         </div>
-
-        {notifications.length > 0 && (
-          <div className="border-t border-border p-2">
-            <Button
-              variant="ghost"
-              className="w-full text-sm"
-              onClick={() => setOpen(false)}
-            >
-              View all notifications
-            </Button>
-          </div>
-        )}
       </DropdownMenuContent>
     </DropdownMenu>
   );

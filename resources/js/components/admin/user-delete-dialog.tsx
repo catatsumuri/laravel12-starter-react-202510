@@ -11,8 +11,9 @@ import {
 } from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
 import { Form } from '@inertiajs/react';
-import type { ComponentProps } from 'react';
 import { Trash } from 'lucide-react';
+import type { ComponentProps } from 'react';
+import { useTranslation } from 'react-i18next';
 
 type TriggerButtonProps = ComponentProps<typeof Button> & {
   'data-test'?: string;
@@ -31,24 +32,21 @@ export default function AdminUserDeleteDialog({
   userName,
   disabled = false,
   triggerProps,
-  confirmLabel = 'Delete user',
+  confirmLabel,
 }: AdminUserDeleteDialogProps) {
-  const {
-    children,
-    className,
-    variant,
-    size,
-    ...restTriggerProps
-  } = triggerProps ?? {};
+  const { t } = useTranslation();
+  const { children, className, variant, size, ...restTriggerProps } =
+    triggerProps ?? {};
 
-  const triggerContent =
-    children ??
-    (
-      <>
-        <Trash className="size-4" />
-        Delete
-      </>
-    );
+  const triggerContent = children ?? (
+    <>
+      <Trash className="size-4" />
+      {t('admin.users.delete.trigger')}
+    </>
+  );
+
+  const resolvedConfirmLabel =
+    confirmLabel ?? t('admin.users.delete.confirm_label');
 
   const composedClassName = cn('gap-2', className);
 
@@ -80,11 +78,10 @@ export default function AdminUserDeleteDialog({
       </DialogTrigger>
       <DialogContent>
         <DialogTitle>
-          Delete {userName} (ID: {userId})?
+          {t('admin.users.delete.title', { name: userName, id: userId })}
         </DialogTitle>
         <DialogDescription>
-          This action will permanently remove {userName}&apos;s account (ID: {userId}) and revoke
-          their ability to sign in. This cannot be undone.
+          {t('admin.users.delete.description', { name: userName, id: userId })}
         </DialogDescription>
 
         <Form
@@ -96,7 +93,7 @@ export default function AdminUserDeleteDialog({
           {({ processing }) => (
             <DialogFooter>
               <DialogClose asChild>
-                <Button variant="secondary">Cancel</Button>
+                <Button variant="secondary">{t('common.cancel')}</Button>
               </DialogClose>
 
               <Button variant="destructive" disabled={processing} asChild>
@@ -104,7 +101,7 @@ export default function AdminUserDeleteDialog({
                   type="submit"
                   data-test={`confirm-delete-user-${userId}`}
                 >
-                  {confirmLabel}
+                  {resolvedConfirmLabel}
                 </button>
               </Button>
             </DialogFooter>

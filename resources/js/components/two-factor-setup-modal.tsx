@@ -19,6 +19,7 @@ import { Form } from '@inertiajs/react';
 import { REGEXP_ONLY_DIGITS } from 'input-otp';
 import { Check, Copy, Loader2, ScanLine } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import AlertError from './alert-error';
 
 function GridScanIcon() {
@@ -62,6 +63,7 @@ function TwoFactorSetupStep({
 }) {
   const [copiedText, copy] = useClipboard();
   const IconComponent = copiedText === manualSetupKey ? Check : Copy;
+  const { t } = useTranslation();
 
   return (
     <>
@@ -94,7 +96,7 @@ function TwoFactorSetupStep({
           <div className="relative flex w-full items-center justify-center">
             <div className="absolute inset-0 top-1/2 h-px w-full bg-border" />
             <span className="relative bg-card px-2 py-1">
-              or, enter the code manually
+              {t('settings.two_factor.modal.manual_entry')}
             </span>
           </div>
 
@@ -115,6 +117,7 @@ function TwoFactorSetupStep({
                   <button
                     onClick={() => copy(manualSetupKey)}
                     className="border-l border-border px-3 hover:bg-muted"
+                    aria-label={t('settings.two_factor.modal.copied')}
                   >
                     <IconComponent className="w-4" />
                   </button>
@@ -137,6 +140,7 @@ function TwoFactorVerificationStep({
 }) {
   const [code, setCode] = useState<string>('');
   const pinInputContainerRef = useRef<HTMLDivElement>(null);
+  const { t } = useTranslation();
 
   useEffect(() => {
     setTimeout(() => {
@@ -188,14 +192,14 @@ function TwoFactorVerificationStep({
                 onClick={onBack}
                 disabled={processing}
               >
-                Back
+                {t('common.cancel')}
               </Button>
               <Button
                 type="submit"
                 className="flex-1"
                 disabled={processing || code.length < OTP_MAX_LENGTH}
               >
-                Confirm
+                {t('settings.two_factor.modal.confirm_button')}
               </Button>
             </div>
           </div>
@@ -230,6 +234,7 @@ export default function TwoFactorSetupModal({
 }: TwoFactorSetupModalProps) {
   const [showVerificationStep, setShowVerificationStep] =
     useState<boolean>(false);
+  const { t } = useTranslation();
 
   const modalConfig = useMemo<{
     title: string;
@@ -238,28 +243,26 @@ export default function TwoFactorSetupModal({
   }>(() => {
     if (twoFactorEnabled) {
       return {
-        title: 'Two-Factor Authentication Enabled',
-        description:
-          'Two-factor authentication is now enabled. Scan the QR code or enter the setup key in your authenticator app.',
-        buttonText: 'Close',
+        title: t('settings.two_factor.modal.enabled_title'),
+        description: t('settings.two_factor.modal.enabled_description'),
+        buttonText: t('settings.two_factor.modal.close'),
       };
     }
 
     if (showVerificationStep) {
       return {
-        title: 'Verify Authentication Code',
-        description: 'Enter the 6-digit code from your authenticator app',
-        buttonText: 'Continue',
+        title: t('settings.two_factor.modal.verify_title'),
+        description: t('settings.two_factor.modal.verify_description'),
+        buttonText: t('settings.two_factor.modal.continue'),
       };
     }
 
     return {
-      title: 'Enable Two-Factor Authentication',
-      description:
-        'To finish enabling two-factor authentication, scan the QR code or enter the setup key in your authenticator app',
-      buttonText: 'Continue',
+      title: t('settings.two_factor.modal.enable_title'),
+      description: t('settings.two_factor.modal.enable_description'),
+      buttonText: t('settings.two_factor.modal.continue'),
     };
-  }, [twoFactorEnabled, showVerificationStep]);
+  }, [twoFactorEnabled, showVerificationStep, t]);
 
   const handleModalNextStep = useCallback(() => {
     if (requiresConfirmation) {

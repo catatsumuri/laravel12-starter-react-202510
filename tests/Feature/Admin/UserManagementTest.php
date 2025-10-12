@@ -91,4 +91,3 @@ it('soft deletes other users', function () {
 
     $this->assertSoftDeleted('users', ['id' => $user->id]);
 });
-

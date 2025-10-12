@@ -48,9 +48,7 @@ export function NavUser() {
         </DropdownMenu>
         {state === 'expanded' && (
           <div className="shrink-0">
-            <NotificationsDropdown
-              buttonClassName="text-sidebar-accent-foreground hover:bg-sidebar-accent/80 focus-visible:ring-sidebar-ring"
-            />
+            <NotificationsDropdown buttonClassName="text-sidebar-accent-foreground hover:bg-sidebar-accent/80 focus-visible:ring-sidebar-ring" />
           </div>
         )}
       </SidebarMenuItem>

@@ -36,8 +36,8 @@ test('admin users receive a system notification when a new user registers', func
             $payload = $notification->toArray($admin);
 
             expect($payload['type'])->toBe('success');
-            expect($payload['title'])->toBe(__('New user registered'));
-            expect($payload['message'])->toBe(__(':name has created an account.', ['name' => $newUser->name]));
+            expect($payload['title'])->toBe(__('admin.notifications.new_user_registered.title'));
+            expect($payload['message'])->toBe(__('admin.notifications.new_user_registered.message', ['name' => $newUser->name]));
 
             return true;
         }

@@ -3,9 +3,11 @@ import AdminUserDeleteDialog from '@/components/admin/user-delete-dialog';
 import Heading from '@/components/heading';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { useDateFormatter } from '@/hooks/use-date-formatter';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link } from '@inertiajs/react';
+import { useTranslation } from 'react-i18next';
 
 type UserDetail = {
   id: number;
@@ -18,9 +20,6 @@ type UserDetail = {
   deleted_at?: string | null;
 };
 
-const formatDateTime = (value?: string | null) =>
-  value ? new Date(value).toLocaleString() : '—';
-
 export default function ShowUser({
   user,
   canDelete,
@@ -28,9 +27,12 @@ export default function ShowUser({
   user: UserDetail;
   canDelete: boolean;
 }) {
+  const { t } = useTranslation();
+  const formatDateTime = useDateFormatter();
+
   const breadcrumbs: BreadcrumbItem[] = [
     {
-      title: 'Users',
+      title: t('admin.users.title'),
       href: AdminUserController.index.url(),
     },
     {
@@ -41,109 +43,127 @@ export default function ShowUser({
 
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
-      <Head title={`User: ${user.name}`} />
+      <Head title={t('admin.users.show.head_title', { name: user.name })} />
 
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <Heading
-          title={user.name}
-          description="Review user profile and account status"
-        />
-        <div className="flex flex-wrap gap-2">
-          <Button asChild variant="outline">
-            <Link href={AdminUserController.index.url()}>Back to users</Link>
-          </Button>
-
-          <Button asChild>
-            <Link href={AdminUserController.edit.url(user.id)}>Edit user</Link>
-          </Button>
-
-          <AdminUserDeleteDialog
-            userId={user.id}
-            userName={user.name}
-            disabled={!canDelete}
-            triggerProps={{
-              className: 'gap-2',
-              size: 'default',
-              'data-test': 'delete-user',
-            }}
-            confirmLabel="Delete user"
+      <div className="flex h-full flex-1 flex-col gap-6 overflow-x-auto rounded-xl p-6">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <Heading
+            title={user.name}
+            description={t('admin.users.show.description')}
           />
-        </div>
-      </div>
+          <div className="flex flex-wrap gap-2">
+            <Button asChild variant="outline">
+              <Link href={AdminUserController.index.url()}>
+                {t('admin.users.show.back')}
+              </Link>
+            </Button>
 
-      <div className="grid gap-6 lg:grid-cols-2">
-        <div className="space-y-4 rounded-lg border border-border bg-card p-6 shadow-sm">
-          <h3 className="text-sm font-semibold text-muted-foreground">
-            Profile
-          </h3>
-          <div className="grid gap-4">
-            <div>
-              <p className="text-xs uppercase text-muted-foreground">Name</p>
-              <p className="text-base font-medium text-foreground">
-                {user.name}
-              </p>
-            </div>
-            <div>
-              <p className="text-xs uppercase text-muted-foreground">Email</p>
-              <p className="text-base text-foreground">{user.email}</p>
-            </div>
-            <div>
-              <p className="text-xs uppercase text-muted-foreground">Roles</p>
-              <div className="mt-2 flex flex-wrap gap-2">
-                {user.roles.length > 0 ? (
-                  user.roles.map((role) => (
-                    <Badge key={role} variant="secondary">
-                      {role}
-                    </Badge>
-                  ))
-                ) : (
-                  <Badge variant="outline">No roles assigned</Badge>
-                )}
-              </div>
-            </div>
+            <Button asChild>
+              <Link href={AdminUserController.edit.url(user.id)}>
+                {t('admin.users.show.edit')}
+              </Link>
+            </Button>
+
+            <AdminUserDeleteDialog
+              userId={user.id}
+              userName={user.name}
+              disabled={!canDelete}
+              triggerProps={{
+                className: 'gap-2',
+                size: 'default',
+                'data-test': 'delete-user',
+              }}
+              confirmLabel={t('admin.users.show.delete')}
+            />
           </div>
         </div>
 
-        <div className="space-y-4 rounded-lg border border-border bg-card p-6 shadow-sm">
-          <h3 className="text-sm font-semibold text-muted-foreground">
-            Account status
-          </h3>
-          <div className="grid gap-4">
-            <div>
-              <p className="text-xs uppercase text-muted-foreground">
-                Email verification
-              </p>
-              <p className="text-base text-foreground">
-                {user.email_verified_at
-                  ? `Verified (${formatDateTime(user.email_verified_at)})`
-                  : 'Not verified'}
-              </p>
+        <div className="grid gap-6 lg:grid-cols-2">
+          <div className="space-y-4 rounded-lg border border-border bg-card p-6 shadow-sm">
+            <h3 className="text-sm font-semibold text-muted-foreground">
+              {t('admin.users.show.profile_heading')}
+            </h3>
+            <div className="grid gap-4">
+              <div>
+                <p className="text-xs text-muted-foreground uppercase">
+                  {t('admin.users.show.name_label')}
+                </p>
+                <p className="text-base font-medium text-foreground">
+                  {user.name}
+                </p>
+              </div>
+              <div>
+                <p className="text-xs text-muted-foreground uppercase">
+                  {t('admin.users.show.email_label')}
+                </p>
+                <p className="text-base text-foreground">{user.email}</p>
+              </div>
+              <div>
+                <p className="text-xs text-muted-foreground uppercase">
+                  {t('admin.users.show.roles_label')}
+                </p>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {user.roles.length > 0 ? (
+                    user.roles.map((role) => (
+                      <Badge key={role} variant="secondary">
+                        {role}
+                      </Badge>
+                    ))
+                  ) : (
+                    <Badge variant="outline">
+                      {t('admin.users.show.no_roles')}
+                    </Badge>
+                  )}
+                </div>
+              </div>
             </div>
-            <div>
-              <p className="text-xs uppercase text-muted-foreground">
-                Created at
-              </p>
-              <p className="text-base text-foreground">
-                {formatDateTime(user.created_at)}
-              </p>
-            </div>
-            <div>
-              <p className="text-xs uppercase text-muted-foreground">
-                Updated at
-              </p>
-              <p className="text-base text-foreground">
-                {formatDateTime(user.updated_at)}
-              </p>
-            </div>
-            <div>
-              <p className="text-xs uppercase text-muted-foreground">
-                Account state
-              </p>
-              <p className="text-base text-foreground">
-                {user.deleted_at
-                  ? `Soft deleted (${formatDateTime(user.deleted_at)})`
-                  : 'Active'}
-              </p>
+          </div>
+
+          <div className="space-y-4 rounded-lg border border-border bg-card p-6 shadow-sm">
+            <h3 className="text-sm font-semibold text-muted-foreground">
+              {t('admin.users.show.account_heading')}
+            </h3>
+            <div className="grid gap-4">
+              <div>
+                <p className="text-xs text-muted-foreground uppercase">
+                  {t('admin.users.show.email_verification_label')}
+                </p>
+                <p className="text-base text-foreground">
+                  {user.email_verified_at
+                    ? t('admin.users.show.verified', {
+                        date: formatDateTime(user.email_verified_at),
+                      })
+                    : t('admin.users.show.not_verified')}
+                </p>
+              </div>
+              <div>
+                <p className="text-xs text-muted-foreground uppercase">
+                  {t('admin.users.show.created_at_label')}
+                </p>
+                <p className="text-base text-foreground">
+                  {formatDateTime(user.created_at)}
+                </p>
+              </div>
+              <div>
+                <p className="text-xs text-muted-foreground uppercase">
+                  {t('admin.users.show.updated_at_label')}
+                </p>
+                <p className="text-base text-foreground">
+                  {formatDateTime(user.updated_at)}
+                </p>
+              </div>
+              <div>
+                <p className="text-xs text-muted-foreground uppercase">
+                  {t('admin.users.show.account_state_label')}
+                </p>
+                <p className="text-base text-foreground">
+                  {user.deleted_at
+                    ? t('admin.users.show.soft_deleted', {
+                        date: formatDateTime(user.deleted_at),
+                      })
+                    : t('admin.users.show.active')}
+                </p>
+              </div>
             </div>
           </div>
         </div>

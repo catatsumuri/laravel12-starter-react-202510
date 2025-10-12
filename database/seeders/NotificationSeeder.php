@@ -32,8 +32,10 @@ class NotificationSeeder extends Seeder
         $notifications = [
             [
                 'type' => 'success',
-                'title' => 'New user registered',
-                'message' => 'Taro Tanaka has created an account',
+                'title' => __('admin.notifications.new_user_registered.title'),
+                'message' => __('admin.notifications.new_user_registered.message', [
+                    'name' => 'Taro Tanaka',
+                ]),
                 'created_at' => $now->subMinutes(2),
                 'read_at' => null,
             ],
