@@ -34,6 +34,11 @@ jobs:
       - name: Install Node Dependencies
         run: npm ci
 
+      - name: Prepare SQLite Database
+        run: |
+          mkdir -p database
+          touch database/database.sqlite
+
       - name: Install Dependencies
         run: composer install --no-interaction --prefer-dist --optimize-autoloader
 
@@ -45,11 +50,6 @@ jobs:
 
       - name: Generate Application Key
         run: php artisan key:generate
-
-      - name: Prepare SQLite Database
-        run: |
-          mkdir -p database
-          touch database/database.sqlite
 
       - name: Tests
         env:
