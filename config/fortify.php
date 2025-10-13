@@ -2,13 +2,7 @@
 
 use Laravel\Fortify\Features;
 
-$twoFactorEnabled = env('APP_ALLOW_TWO_FACTOR_AUTHENTICATION');
-
-if ($twoFactorEnabled === null) {
-    $twoFactorEnabled = true;
-} else {
-    $twoFactorEnabled = filter_var($twoFactorEnabled, FILTER_VALIDATE_BOOLEAN);
-}
+$twoFactorEnabled = config('app.allow_two_factor_authentication');
 
 $twoFactorOptions = [
     'confirm' => true,

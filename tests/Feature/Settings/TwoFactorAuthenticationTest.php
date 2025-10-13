@@ -10,11 +10,13 @@ test('two factor settings page can be rendered', function () {
     }
 
     config(['app.allow_appearance_customization' => true]);
+    config(['app.allow_two_factor_authentication' => true]);
 
-    Features::twoFactorAuthentication([
+    $feature = Features::twoFactorAuthentication([
         'confirm' => true,
         'confirmPassword' => true,
     ]);
+    config(['fortify.features' => [$feature]]);
 
     $user = User::factory()->withoutTwoFactor()->create();
 
@@ -33,13 +35,15 @@ test('two factor settings page requires password confirmation when enabled', fun
     }
 
     config(['app.allow_appearance_customization' => true]);
+    config(['app.allow_two_factor_authentication' => true]);
 
     $user = User::factory()->create();
 
-    Features::twoFactorAuthentication([
+    $feature = Features::twoFactorAuthentication([
         'confirm' => true,
         'confirmPassword' => true,
     ]);
+    config(['fortify.features' => [$feature]]);
 
     $response = $this->actingAs($user)
         ->get(route('two-factor.show'));
@@ -53,13 +57,15 @@ test('two factor settings page does not requires password confirmation when disa
     }
 
     config(['app.allow_appearance_customization' => true]);
+    config(['app.allow_two_factor_authentication' => true]);
 
     $user = User::factory()->create();
 
-    Features::twoFactorAuthentication([
+    $feature = Features::twoFactorAuthentication([
         'confirm' => true,
         'confirmPassword' => false,
     ]);
+    config(['fortify.features' => [$feature]]);
 
     $this->actingAs($user)
         ->get(route('two-factor.show'))
@@ -74,10 +80,13 @@ test('two factor settings page returns forbidden response when two factor is dis
         $this->markTestSkipped('Two-factor authentication is not enabled.');
     }
 
-    config(['app.allow_appearance_customization' => true]);
+    config(['app.allow_two_factor_authentication' => false]);
 
-    config(['fortify.features' => []]);
-    config(['fortify.two_factor_authentication.enabled' => false]);
+    $feature = Features::twoFactorAuthentication([
+        'confirm' => true,
+        'confirmPassword' => true,
+    ]);
+    config(['fortify.features' => [$feature]]);
 
     $user = User::factory()->create();
 
@@ -87,9 +96,13 @@ test('two factor settings page returns forbidden response when two factor is dis
         ->assertForbidden();
 });
 
-test('shared props contain two factor flag', function () {
-    config(['fortify.features' => []]);
-    config(['fortify.two_factor_authentication.enabled' => false]);
+test('shared props reflect disabled two factor flag', function () {
+    $feature = Features::twoFactorAuthentication([
+        'confirm' => true,
+        'confirmPassword' => true,
+    ]);
+    config(['fortify.features' => [$feature]]);
+    config(['app.allow_two_factor_authentication' => false]);
 
     $user = User::factory()->create();
 
@@ -101,10 +114,13 @@ test('shared props contain two factor flag', function () {
         );
 });
 
-test('settings navigation omits two factor link when feature disabled', function () {
-    config(['fortify.features' => []]);
-    config(['fortify.two_factor_authentication.enabled' => false]);
-    config(['app.allow_appearance_customization' => true]);
+test('settings navigation omits two factor link when application disables it', function () {
+    $feature = Features::twoFactorAuthentication([
+        'confirm' => true,
+        'confirmPassword' => true,
+    ]);
+    config(['fortify.features' => [$feature]]);
+    config(['app.allow_two_factor_authentication' => false]);
 
     $user = User::factory()->create();
 
@@ -116,10 +132,9 @@ test('settings navigation omits two factor link when feature disabled', function
         );
 });
 
-test('settings navigation omits appearance link when feature disabled', function () {
-    config(['fortify.features' => []]);
-    config(['fortify.two_factor_authentication.enabled' => false]);
+test('settings navigation omits appearance link when appearance feature disabled', function () {
     config(['app.allow_appearance_customization' => false]);
+    config(['app.allow_two_factor_authentication' => true]);
 
     $user = User::factory()->create();
 
@@ -131,36 +146,41 @@ test('settings navigation omits appearance link when feature disabled', function
         );
 });
 
-test('settings navigation hides two factor when appearance customization disabled', function () {
+test('settings navigation shows two factor link even when appearance customization disabled', function () {
     $feature = Features::twoFactorAuthentication([
         'confirm' => true,
         'confirmPassword' => true,
     ]);
     config(['fortify.features' => [$feature]]);
     config(['app.allow_appearance_customization' => false]);
+    config(['app.allow_two_factor_authentication' => true]);
 
-    $user = User::factory()->withoutTwoFactor()->create();
+    $user = User::factory()->create();
 
     $this->actingAs($user)
         ->withSession(['auth.password_confirmed_at' => time()])
         ->get(route('profile.edit'))
         ->assertInertia(fn (Assert $page) => $page
-            ->where('settingsNavigation.twoFactor', false)
+            ->where('settingsNavigation.twoFactor', true)
         );
 });
 
-test('two factor settings page returns forbidden when appearance customization disabled', function () {
+test('two factor settings page accessible when appearance customization disabled', function () {
     $feature = Features::twoFactorAuthentication([
         'confirm' => true,
         'confirmPassword' => true,
     ]);
     config(['fortify.features' => [$feature]]);
     config(['app.allow_appearance_customization' => false]);
+    config(['app.allow_two_factor_authentication' => true]);
 
     $user = User::factory()->withoutTwoFactor()->create();
 
     $this->actingAs($user)
         ->withSession(['auth.password_confirmed_at' => time()])
         ->get(route('two-factor.show'))
-        ->assertForbidden();
+        ->assertOk()
+        ->assertInertia(fn (Assert $page) => $page
+            ->component('settings/two-factor')
+        );
 });

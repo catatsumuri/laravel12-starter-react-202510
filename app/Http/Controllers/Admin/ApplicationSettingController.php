@@ -20,6 +20,7 @@ class ApplicationSettingController extends Controller
             'appName' => Setting::value('app.name', config('app.name')),
             'allowRegistration' => config('app.allow_registration'),
             'allowAppearanceCustomization' => config('app.allow_appearance_customization'),
+            'allowTwoFactorAuthentication' => config('app.allow_two_factor_authentication'),
             'defaultAppearance' => config('app.default_appearance', 'light'),
         ]);
     }
@@ -33,6 +34,7 @@ class ApplicationSettingController extends Controller
             'app_name' => ['required', 'string', 'max:255'],
             'allow_registration' => ['nullable', 'boolean'],
             'allow_appearance_customization' => ['nullable', 'boolean'],
+            'allow_two_factor_authentication' => ['nullable', 'boolean'],
             'locale' => ['required', 'string', Rule::in($availableLocales)],
             'default_appearance' => ['required', 'string', Rule::in(['light', 'dark', 'system'])],
             'timezone' => [
@@ -46,21 +48,21 @@ class ApplicationSettingController extends Controller
         $appName = $validated['app_name'];
         $allowRegistration = $request->boolean('allow_registration');
         $allowAppearanceCustomization = $request->boolean('allow_appearance_customization');
+        $allowTwoFactorAuthentication = $request->boolean('allow_two_factor_authentication');
+        Setting::updateValue('app.allow_appearance_customization', $allowAppearanceCustomization ? '1' : '0');
+        Setting::updateValue('app.allow_two_factor_authentication', $allowTwoFactorAuthentication ? '1' : '0');
         $defaultAppearance = $validated['default_appearance'];
         $locale = $validated['locale'];
         $timezone = $validated['timezone'] ?? null;
 
         Setting::updateValue('app.name', $appName);
         Setting::updateValue('app.allow_registration', $allowRegistration ? '1' : '0');
-        Setting::updateValue(
-            'app.allow_appearance_customization',
-            $allowAppearanceCustomization ? '1' : '0',
-        );
         Setting::updateValue('app.default_appearance', $defaultAppearance);
 
         config(['app.name' => $appName]);
         config(['app.allow_registration' => $allowRegistration]);
         config(['app.allow_appearance_customization' => $allowAppearanceCustomization]);
+        config(['app.allow_two_factor_authentication' => $allowTwoFactorAuthentication]);
         config(['app.default_appearance' => $defaultAppearance]);
 
         app()->setLocale($locale);

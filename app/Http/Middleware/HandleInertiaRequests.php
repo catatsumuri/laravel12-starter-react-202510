@@ -51,8 +51,9 @@ class HandleInertiaRequests extends Middleware
         $locale = app()->getLocale();
         $fallbackLocale = config('app.fallback_locale');
         $allowAppearance = (bool) config('app.allow_appearance_customization');
+        $twoFactorSetting = (bool) config('app.allow_two_factor_authentication', true);
         $twoFactorFeatureEnabled = Features::canManageTwoFactorAuthentication();
-        $allowTwoFactor = $allowAppearance && $twoFactorFeatureEnabled;
+        $allowTwoFactor = $twoFactorSetting && $twoFactorFeatureEnabled;
 
         return [
             ...parent::share($request),

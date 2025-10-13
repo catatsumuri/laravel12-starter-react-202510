@@ -19,6 +19,7 @@ type AdminSettingsProps = {
   appName: string;
   allowRegistration: boolean;
   allowAppearanceCustomization: boolean;
+  allowTwoFactorAuthentication: boolean;
   defaultAppearance: AppearanceOption;
 };
 
@@ -31,6 +32,7 @@ export default function AdminSettingsIndex({
   appName,
   allowRegistration: initialAllowRegistration,
   allowAppearanceCustomization: initialAllowAppearanceCustomization,
+  allowTwoFactorAuthentication: initialAllowTwoFactorAuthentication,
   defaultAppearance: initialDefaultAppearance,
 }: AdminSettingsProps) {
   const { t } = useTranslation();
@@ -42,6 +44,7 @@ export default function AdminSettingsIndex({
     csrf_token,
     allowRegistration: sharedAllowRegistration,
     allowAppearanceCustomization: sharedAllowAppearanceCustomization,
+    allowTwoFactorAuthentication: sharedAllowTwoFactorAuthentication,
     defaultAppearance: sharedDefaultAppearance,
     errors: pageErrors = {},
   } = usePage<AdminPageProps>().props;
@@ -63,6 +66,12 @@ export default function AdminSettingsIndex({
       : initialAllowAppearanceCustomization;
   const [allowAppearanceCustomization, setAllowAppearanceCustomization] =
     useState(derivedAllowAppearanceCustomization);
+  const derivedAllowTwoFactorAuthentication =
+    typeof sharedAllowTwoFactorAuthentication === 'boolean'
+      ? sharedAllowTwoFactorAuthentication
+      : initialAllowTwoFactorAuthentication;
+  const [allowTwoFactorAuthentication, setAllowTwoFactorAuthentication] =
+    useState(derivedAllowTwoFactorAuthentication);
   const derivedDefaultAppearance =
     typeof sharedDefaultAppearance === 'string' &&
     ['light', 'dark', 'system'].includes(sharedDefaultAppearance)
@@ -87,6 +96,10 @@ export default function AdminSettingsIndex({
   useEffect(() => {
     setAllowAppearanceCustomization(derivedAllowAppearanceCustomization);
   }, [derivedAllowAppearanceCustomization]);
+
+  useEffect(() => {
+    setAllowTwoFactorAuthentication(derivedAllowTwoFactorAuthentication);
+  }, [derivedAllowTwoFactorAuthentication]);
 
   useEffect(() => {
     setDefaultAppearance(derivedDefaultAppearance);
@@ -159,6 +172,11 @@ export default function AdminSettingsIndex({
               type="hidden"
               name="allow_appearance_customization"
               value={allowAppearanceCustomization ? '1' : '0'}
+            />
+            <input
+              type="hidden"
+              name="allow_two_factor_authentication"
+              value={allowTwoFactorAuthentication ? '1' : '0'}
             />
             <input
               type="hidden"
@@ -337,6 +355,40 @@ export default function AdminSettingsIndex({
                 <InputError
                   className="mt-1"
                   message={getError('default_appearance')}
+                />
+              </div>
+            </section>
+
+            <hr className="border-border" />
+
+            <section className="space-y-4">
+              <HeadingSmall
+                title={t('admin.settings.section_security_title')}
+                description={t('admin.settings.section_security_description')}
+              />
+
+              <div className="space-y-2">
+                <div className="flex items-center gap-3">
+                  <Checkbox
+                    id="allow_two_factor_authentication"
+                    checked={allowTwoFactorAuthentication}
+                    onCheckedChange={(checked) =>
+                      setAllowTwoFactorAuthentication(checked === true)
+                    }
+                  />
+                  <Label
+                    htmlFor="allow_two_factor_authentication"
+                    className="text-sm text-foreground"
+                  >
+                    {t('admin.settings.allow_two_factor_label')}
+                  </Label>
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  {t('admin.settings.allow_two_factor_description')}
+                </p>
+                <InputError
+                  className="mt-1"
+                  message={getError('allow_two_factor_authentication')}
                 />
               </div>
             </section>

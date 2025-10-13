@@ -202,6 +202,10 @@ return [
             'section_access_description' => 'Choose whether users can self-register or require approval.',
             'section_appearance_title' => 'Appearance defaults',
             'section_appearance_description' => 'Select the default theme and customise what users are allowed to change.',
+            'section_security_title' => 'Security features',
+            'section_security_description' => 'Control two-factor authentication availability and related security defaults.',
+            'allow_two_factor_label' => 'Allow users to enable two-factor authentication',
+            'allow_two_factor_description' => 'When disabled, the two-factor settings page is hidden and logins skip TOTP challenges.',
         ],
         'users' => [
             'title' => 'Users',

@@ -63,6 +63,7 @@ it('updates the application name', function () {
             'app_name' => 'Custom Admin Portal',
             'allow_registration' => true,
             'allow_appearance_customization' => true,
+            'allow_two_factor_authentication' => true,
             'default_appearance' => 'light',
             'locale' => config('app.locale'),
             'timezone' => $currentTimezone,
@@ -87,6 +88,7 @@ it('updates the allow registration flag', function () {
             'app_name' => 'Custom Admin Portal',
             'allow_registration' => true,
             'allow_appearance_customization' => true,
+            'allow_two_factor_authentication' => true,
             'default_appearance' => 'light',
             'locale' => config('app.locale'),
             'timezone' => $currentTimezone,
@@ -112,6 +114,7 @@ it('updates the timezone using the main settings form', function () {
                 'app_name' => 'Custom Admin Portal',
                 'allow_registration' => true,
                 'allow_appearance_customization' => true,
+                'allow_two_factor_authentication' => true,
                 'default_appearance' => 'light',
                 'locale' => config('app.locale'),
                 'timezone' => 'UTC',
@@ -143,6 +146,7 @@ it('updates the appearance customization flag', function () {
             'app_name' => 'Custom Admin Portal',
             'allow_registration' => true,
             'allow_appearance_customization' => true,
+            'allow_two_factor_authentication' => true,
             'default_appearance' => 'dark',
             'locale' => config('app.locale'),
             'timezone' => $currentTimezone,
@@ -154,4 +158,29 @@ it('updates the appearance customization flag', function () {
         ->and(config('app.allow_appearance_customization'))->toBeTrue()
         ->and(Setting::value('app.default_appearance'))->toBe('dark')
         ->and(config('app.default_appearance'))->toBe('dark');
+});
+
+it('updates the two factor authentication flag', function () {
+    Setting::updateValue('app.allow_two_factor_authentication', '1');
+    config(['app.allow_two_factor_authentication' => true]);
+    $currentTimezone = config('app.timezone');
+
+    $admin = adminUser();
+
+    $this->from(route('admin.settings.edit'))
+        ->actingAs($admin)
+        ->put(route('admin.settings.update'), [
+            'app_name' => 'Custom Admin Portal',
+            'allow_registration' => true,
+            'allow_appearance_customization' => true,
+            'allow_two_factor_authentication' => false,
+            'default_appearance' => 'light',
+            'locale' => config('app.locale'),
+            'timezone' => $currentTimezone,
+        ])
+        ->assertRedirect(route('admin.settings.edit'))
+        ->assertSessionHas('success', __('admin.settings.application_updated'));
+
+    expect(Setting::value('app.allow_two_factor_authentication'))->toBe('0')
+        ->and(config('app.allow_two_factor_authentication'))->toBeFalse();
 });

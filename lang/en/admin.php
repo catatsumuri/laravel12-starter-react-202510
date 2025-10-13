@@ -25,6 +25,10 @@ return [
         'section_access_description' => 'Manage whether users can self-register or require admin provisioning.',
         'section_appearance_title' => 'Appearance defaults',
         'section_appearance_description' => 'Define the default theme and whether users can override the appearance.',
+        'section_security_title' => 'Security features',
+        'section_security_description' => 'Control two-factor authentication availability and related security defaults.',
+        'allow_two_factor_label' => 'Allow users to enable two-factor authentication',
+        'allow_two_factor_description' => 'When disabled, the two-factor settings page is hidden and logins skip TOTP challenges.',
     ],
     'notifications' => [
         'new_user_registered' => [

@@ -35,7 +35,8 @@ class AppServiceProvider extends ServiceProvider
         }
 
         $this->syncBooleanSetting('app.allow_registration', 'app.allow_registration');
-        $this->syncBooleanSetting('app.allow_appearance_customization', 'app.allow_appearance_customization');
+        $this->syncAppearanceCustomization();
+        $this->syncTwoFactorAuthentication();
         $this->syncAppearanceSetting();
         $this->syncLocale();
     }
@@ -66,6 +67,32 @@ class AppServiceProvider extends ServiceProvider
         }
 
         config(['app.default_appearance' => $value]);
+    }
+
+    protected function syncAppearanceCustomization(): void
+    {
+        $stored = Setting::value('app.allow_appearance_customization');
+
+        if (! is_null($stored)) {
+            $value = filter_var($stored, FILTER_VALIDATE_BOOL);
+        } else {
+            $value = (bool) env('APP_ALLOW_APPEARANCE_CUSTOMIZATION', true);
+        }
+
+        config(['app.allow_appearance_customization' => $value]);
+    }
+
+    protected function syncTwoFactorAuthentication(): void
+    {
+        $stored = Setting::value('app.allow_two_factor_authentication');
+
+        if (! is_null($stored)) {
+            $value = filter_var($stored, FILTER_VALIDATE_BOOL);
+        } else {
+            $value = (bool) env('APP_ALLOW_TWO_FACTOR_AUTHENTICATION', true);
+        }
+
+        config(['app.allow_two_factor_authentication' => $value]);
     }
 
     protected function syncLocale(): void

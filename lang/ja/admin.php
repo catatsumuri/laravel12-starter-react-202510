@@ -25,6 +25,10 @@ return [
         'section_access_description' => 'ユーザーのセルフサインアップなど、アカウント作成に関する挙動を制御します。',
         'section_appearance_title' => 'アピアランス設定',
         'section_appearance_description' => 'ユーザーに提供するテーマオプションや既定テーマを変更します。',
+        'section_security_title' => 'セキュリティ設定',
+        'section_security_description' => '二要素認証の利用可否など、セキュリティに関する既定値を管理します。',
+        'allow_two_factor_label' => 'ユーザーによる二要素認証の有効化を許可する',
+        'allow_two_factor_description' => '無効にすると、設定画面から二要素認証が隠され、ログイン時のTOTP認証もスキップされます。',
     ],
     'notifications' => [
         'new_user_registered' => [
