@@ -2,6 +2,19 @@
 
 use Laravel\Fortify\Features;
 
+$twoFactorEnabled = env('APP_ALLOW_TWO_FACTOR_AUTHENTICATION');
+
+if ($twoFactorEnabled === null) {
+    $twoFactorEnabled = true;
+} else {
+    $twoFactorEnabled = filter_var($twoFactorEnabled, FILTER_VALIDATE_BOOLEAN);
+}
+
+$twoFactorOptions = [
+    'confirm' => true,
+    'confirmPassword' => true,
+];
+
 return [
 
     /*
@@ -143,17 +156,18 @@ return [
     |
     */
 
-    'features' => [
+    'two_factor_authentication' => [
+        'enabled' => $twoFactorEnabled,
+        'options' => $twoFactorOptions,
+    ],
+
+    'features' => array_values(array_filter([
         // Features::registration(),
         // Features::resetPasswords(),
         // Features::emailVerification(),
         // Features::updateProfileInformation(),
         // Features::updatePasswords(),
-        Features::twoFactorAuthentication([
-            'confirm' => true,
-            'confirmPassword' => true,
-            // 'window' => 0
-        ]),
-    ],
+        $twoFactorEnabled ? Features::twoFactorAuthentication($twoFactorOptions) : null,
+    ])),
 
 ];

@@ -20,6 +20,7 @@ export interface NavItem {
   href: NonNullable<InertiaLinkProps['href']>;
   icon?: LucideIcon | null;
   isActive?: boolean;
+  disabled?: boolean;
 }
 
 export interface Notification {
@@ -42,6 +43,14 @@ export interface SharedData {
   availableTimezones?: string[];
   allowRegistration?: boolean;
   allowAppearanceCustomization?: boolean;
+  allowTwoFactorAuthentication?: boolean;
+  settingsNavigation?: {
+    profile?: boolean;
+    password?: boolean;
+    twoFactor?: boolean;
+    appearance?: boolean;
+    [key: string]: unknown;
+  };
   defaultAppearance?: 'light' | 'dark' | 'system';
   quote: { message: string; author: string };
   auth: Auth;

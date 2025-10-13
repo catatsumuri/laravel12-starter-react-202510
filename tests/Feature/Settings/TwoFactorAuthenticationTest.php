@@ -9,6 +9,8 @@ test('two factor settings page can be rendered', function () {
         $this->markTestSkipped('Two-factor authentication is not enabled.');
     }
 
+    config(['app.allow_appearance_customization' => true]);
+
     Features::twoFactorAuthentication([
         'confirm' => true,
         'confirmPassword' => true,
@@ -30,6 +32,8 @@ test('two factor settings page requires password confirmation when enabled', fun
         $this->markTestSkipped('Two-factor authentication is not enabled.');
     }
 
+    config(['app.allow_appearance_customization' => true]);
+
     $user = User::factory()->create();
 
     Features::twoFactorAuthentication([
@@ -47,6 +51,8 @@ test('two factor settings page does not requires password confirmation when disa
     if (! Features::canManageTwoFactorAuthentication()) {
         $this->markTestSkipped('Two-factor authentication is not enabled.');
     }
+
+    config(['app.allow_appearance_customization' => true]);
 
     $user = User::factory()->create();
 
@@ -68,9 +74,90 @@ test('two factor settings page returns forbidden response when two factor is dis
         $this->markTestSkipped('Two-factor authentication is not enabled.');
     }
 
+    config(['app.allow_appearance_customization' => true]);
+
     config(['fortify.features' => []]);
+    config(['fortify.two_factor_authentication.enabled' => false]);
 
     $user = User::factory()->create();
+
+    $this->actingAs($user)
+        ->withSession(['auth.password_confirmed_at' => time()])
+        ->get(route('two-factor.show'))
+        ->assertForbidden();
+});
+
+test('shared props contain two factor flag', function () {
+    config(['fortify.features' => []]);
+    config(['fortify.two_factor_authentication.enabled' => false]);
+
+    $user = User::factory()->create();
+
+    $this->actingAs($user)
+        ->withSession(['auth.password_confirmed_at' => time()])
+        ->get(route('profile.edit'))
+        ->assertInertia(fn (Assert $page) => $page
+            ->where('allowTwoFactorAuthentication', false)
+        );
+});
+
+test('settings navigation omits two factor link when feature disabled', function () {
+    config(['fortify.features' => []]);
+    config(['fortify.two_factor_authentication.enabled' => false]);
+    config(['app.allow_appearance_customization' => true]);
+
+    $user = User::factory()->create();
+
+    $this->actingAs($user)
+        ->withSession(['auth.password_confirmed_at' => time()])
+        ->get(route('profile.edit'))
+        ->assertInertia(fn (Assert $page) => $page
+            ->where('settingsNavigation.twoFactor', false)
+        );
+});
+
+test('settings navigation omits appearance link when feature disabled', function () {
+    config(['fortify.features' => []]);
+    config(['fortify.two_factor_authentication.enabled' => false]);
+    config(['app.allow_appearance_customization' => false]);
+
+    $user = User::factory()->create();
+
+    $this->actingAs($user)
+        ->withSession(['auth.password_confirmed_at' => time()])
+        ->get(route('profile.edit'))
+        ->assertInertia(fn (Assert $page) => $page
+            ->where('settingsNavigation.appearance', false)
+        );
+});
+
+test('settings navigation hides two factor when appearance customization disabled', function () {
+    $feature = Features::twoFactorAuthentication([
+        'confirm' => true,
+        'confirmPassword' => true,
+    ]);
+    config(['fortify.features' => [$feature]]);
+    config(['app.allow_appearance_customization' => false]);
+
+    $user = User::factory()->withoutTwoFactor()->create();
+
+    $this->actingAs($user)
+        ->withSession(['auth.password_confirmed_at' => time()])
+        ->get(route('profile.edit'))
+        ->assertInertia(fn (Assert $page) => $page
+            ->where('settingsNavigation.twoFactor', false)
+        );
+});
+
+test('two factor settings page returns forbidden when appearance customization disabled', function () {
+    $feature = Features::twoFactorAuthentication([
+        'confirm' => true,
+        'confirmPassword' => true,
+    ]);
+    config(['fortify.features' => [$feature]]);
+    config(['app.allow_appearance_customization' => false]);
+
+    $user = User::factory()->withoutTwoFactor()->create();
 
     $this->actingAs($user)
         ->withSession(['auth.password_confirmed_at' => time()])

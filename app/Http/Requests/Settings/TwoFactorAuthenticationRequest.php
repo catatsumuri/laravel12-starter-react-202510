@@ -15,6 +15,10 @@ class TwoFactorAuthenticationRequest extends FormRequest
      */
     public function authorize(): bool
     {
+        if (! config('app.allow_appearance_customization')) {
+            return false;
+        }
+
         return Features::enabled(Features::twoFactorAuthentication());
     }
 
