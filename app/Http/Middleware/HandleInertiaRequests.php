@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Support\Facades\Lang;
 use Inertia\Middleware;
+use Laravel\Fortify\Features;
 
 class HandleInertiaRequests extends Middleware
 {
@@ -49,6 +50,10 @@ class HandleInertiaRequests extends Middleware
 
         $locale = app()->getLocale();
         $fallbackLocale = config('app.fallback_locale');
+        $allowAppearance = (bool) config('app.allow_appearance_customization');
+        $twoFactorSetting = (bool) config('app.allow_two_factor_authentication', true);
+        $twoFactorFeatureEnabled = Features::canManageTwoFactorAuthentication();
+        $allowTwoFactor = $twoFactorSetting && $twoFactorFeatureEnabled;
 
         return [
             ...parent::share($request),
@@ -58,6 +63,16 @@ class HandleInertiaRequests extends Middleware
             'availableLocales' => config('app.available_locales', []),
             'timezone' => config('app.timezone'),
             'availableTimezones' => config('app.available_timezones', []),
+            'allowRegistration' => config('app.allow_registration'),
+            'allowAppearanceCustomization' => $allowAppearance,
+            'allowTwoFactorAuthentication' => $allowTwoFactor,
+            'settingsNavigation' => [
+                'profile' => true,
+                'password' => true,
+                'twoFactor' => $allowTwoFactor,
+                'appearance' => $allowAppearance,
+            ],
+            'defaultAppearance' => config('app.default_appearance', 'light'),
             'translations' => $this->frontendTranslations($locale),
             'fallbackTranslations' => $fallbackLocale !== $locale
                 ? $this->frontendTranslations($fallbackLocale)

@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import AuthLayout from '@/layouts/auth-layout';
 import { register } from '@/routes';
 import { request } from '@/routes/password';
-import { Form, Head } from '@inertiajs/react';
+import { Form, Head, usePage } from '@inertiajs/react';
 import { LoaderCircle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
@@ -18,6 +18,8 @@ interface LoginProps {
 }
 
 export default function Login({ status, canResetPassword }: LoginProps) {
+  const allowRegistration =
+    usePage<{ allowRegistration?: boolean }>().props.allowRegistration ?? false;
   const { t } = useTranslation();
 
   return (
@@ -94,12 +96,14 @@ export default function Login({ status, canResetPassword }: LoginProps) {
               </Button>
             </div>
 
-            <div className="text-center text-sm text-muted-foreground">
-              {t('auth.login.no_account')}{' '}
-              <TextLink href={register()} tabIndex={5}>
-                {t('auth.login.sign_up')}
-              </TextLink>
-            </div>
+            {allowRegistration && (
+              <div className="text-center text-sm text-muted-foreground">
+                {t('auth.login.no_account')}{' '}
+                <TextLink href={register()} tabIndex={5}>
+                  {t('auth.login.sign_up')}
+                </TextLink>
+              </div>
+            )}
           </>
         )}
       </Form>

@@ -6,18 +6,31 @@ import { edit as editAppearance } from '@/routes/appearance';
 import { edit as editPassword } from '@/routes/password';
 import { edit } from '@/routes/profile';
 import { show } from '@/routes/two-factor';
-import { type NavItem } from '@/types';
-import { Link } from '@inertiajs/react';
+import { type NavItem, type SharedData } from '@/types';
+import { Link, usePage } from '@inertiajs/react';
 import { type PropsWithChildren, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 export default function SettingsLayout({ children }: PropsWithChildren) {
   const { t } = useTranslation();
+  const {
+    allowAppearanceCustomization = true,
+    allowTwoFactorAuthentication = true,
+    settingsNavigation,
+  } = usePage<SharedData>().props;
+
+  const canShowTwoFactor =
+    allowTwoFactorAuthentication &&
+    (settingsNavigation?.twoFactor ?? allowTwoFactorAuthentication);
+
+  const canShowAppearance =
+    allowAppearanceCustomization &&
+    (settingsNavigation?.appearance ?? allowAppearanceCustomization);
 
   const isBrowser = typeof window !== 'undefined';
   const currentPath = isBrowser ? window.location.pathname : '';
-  const sidebarNavItems = useMemo<NavItem[]>(
-    () => [
+  const sidebarNavItems = useMemo<NavItem[]>(() => {
+    const items: NavItem[] = [
       {
         title: t('settings.profile.breadcrumb'),
         href: edit(),
@@ -28,19 +41,26 @@ export default function SettingsLayout({ children }: PropsWithChildren) {
         href: editPassword(),
         icon: null,
       },
-      {
+    ];
+
+    if (canShowTwoFactor) {
+      items.push({
         title: t('settings.two_factor.breadcrumb'),
         href: show(),
         icon: null,
-      },
-      {
+      });
+    }
+
+    if (canShowAppearance) {
+      items.push({
         title: t('settings.appearance.breadcrumb'),
         href: editAppearance(),
         icon: null,
-      },
-    ],
-    [t],
-  );
+      });
+    }
+
+    return items;
+  }, [canShowAppearance, canShowTwoFactor, t]);
 
   // When server-side rendering, we only render the layout on the client...
   if (!isBrowser) {
@@ -57,24 +77,28 @@ export default function SettingsLayout({ children }: PropsWithChildren) {
       <div className="flex flex-col lg:flex-row lg:space-x-12">
         <aside className="w-full max-w-xl lg:w-48">
           <nav className="flex flex-col space-y-1 space-x-0">
-            {sidebarNavItems.map((item, index) => (
-              <Button
-                key={`${typeof item.href === 'string' ? item.href : item.href.url}-${index}`}
-                size="sm"
-                variant="ghost"
-                asChild
-                className={cn('w-full justify-start', {
-                  'bg-muted':
-                    currentPath ===
-                    (typeof item.href === 'string' ? item.href : item.href.url),
-                })}
-              >
-                <Link href={item.href}>
-                  {item.icon && <item.icon className="h-4 w-4" />}
-                  {item.title}
-                </Link>
-              </Button>
-            ))}
+            {sidebarNavItems.map((item, index) => {
+              const href =
+                typeof item.href === 'string' ? item.href : item.href.url;
+              const buttonClasses = cn('w-full justify-start', {
+                'bg-muted': currentPath === href,
+              });
+
+              return (
+                <Button
+                  key={`${href}-${index}`}
+                  size="sm"
+                  variant="ghost"
+                  asChild
+                  className={buttonClasses}
+                >
+                  <Link href={item.href}>
+                    {item.icon && <item.icon className="h-4 w-4" />}
+                    {item.title}
+                  </Link>
+                </Button>
+              );
+            })}
           </nav>
         </aside>
 

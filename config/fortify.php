@@ -2,6 +2,13 @@
 
 use Laravel\Fortify\Features;
 
+$twoFactorEnabled = config('app.allow_two_factor_authentication');
+
+$twoFactorOptions = [
+    'confirm' => true,
+    'confirmPassword' => true,
+];
+
 return [
 
     /*
@@ -143,17 +150,18 @@ return [
     |
     */
 
-    'features' => [
+    'two_factor_authentication' => [
+        'enabled' => $twoFactorEnabled,
+        'options' => $twoFactorOptions,
+    ],
+
+    'features' => array_values(array_filter([
         // Features::registration(),
         // Features::resetPasswords(),
         // Features::emailVerification(),
         // Features::updateProfileInformation(),
         // Features::updatePasswords(),
-        Features::twoFactorAuthentication([
-            'confirm' => true,
-            'confirmPassword' => true,
-            // 'window' => 0
-        ]),
-    ],
+        $twoFactorEnabled ? Features::twoFactorAuthentication($twoFactorOptions) : null,
+    ])),
 
 ];

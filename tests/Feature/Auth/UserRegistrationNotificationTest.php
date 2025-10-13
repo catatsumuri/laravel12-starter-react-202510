@@ -11,6 +11,8 @@ test('admin users receive a system notification when a new user registers', func
 
     app(PermissionRegistrar::class)->forgetCachedPermissions();
 
+    config(['app.allow_registration' => true]);
+
     $adminRole = Role::create(['name' => 'admin']);
     Role::create(['name' => 'user']);
 

@@ -2,12 +2,33 @@
 
 use App\Models\User;
 use Illuminate\Support\Facades\RateLimiter;
+use Inertia\Testing\AssertableInertia;
 use Laravel\Fortify\Features;
 
 test('login screen can be rendered', function () {
+    config(['app.allow_registration' => true]);
+
     $response = $this->get(route('login'));
 
     $response->assertStatus(200);
+});
+
+test('login screen respects registration toggle', function () {
+    config(['app.allow_registration' => false]);
+
+    $this->get(route('login'))
+        ->assertStatus(200)
+        ->assertInertia(fn (AssertableInertia $page) => $page
+            ->where('allowRegistration', false)
+        );
+
+    config(['app.allow_registration' => true]);
+
+    $this->get(route('login'))
+        ->assertStatus(200)
+        ->assertInertia(fn (AssertableInertia $page) => $page
+            ->where('allowRegistration', true)
+        );
 });
 
 test('users can authenticate using the login screen', function () {

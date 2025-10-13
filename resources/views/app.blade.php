@@ -7,14 +7,38 @@
         {{-- Inline script to detect system dark mode preference and apply it immediately --}}
         <script>
             (function() {
-                const appearance = '{{ $appearance ?? "system" }}';
+                const allowAppearanceCustomization = {{ config('app.allow_appearance_customization') ? 'true' : 'false' }};
+                const defaultAppearance = '{{ config('app.default_appearance', 'light') }}';
+                const appearance = '{{ $appearance ?? "light" }}';
 
-                if (appearance === 'system') {
-                    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                window.__ALLOW_APPEARANCE_CUSTOMIZATION__ = allowAppearanceCustomization;
+                window.__DEFAULT_APPEARANCE__ = defaultAppearance;
 
-                    if (prefersDark) {
-                        document.documentElement.classList.add('dark');
+                if (!allowAppearanceCustomization) {
+                    try {
+                        localStorage.removeItem('appearance');
+                    } catch (error) {
+                        console.error('Failed to clear appearance preference from localStorage', error);
                     }
+
+                    document.cookie = 'appearance=;path=/;max-age=0;SameSite=Lax';
+                    const effectiveAppearance = defaultAppearance;
+
+                    document.documentElement.classList.toggle('dark', effectiveAppearance === 'dark');
+                    document.documentElement.style.colorScheme = effectiveAppearance === 'dark' ? 'dark' : 'light';
+
+                    return;
+                }
+
+                const resolvedAppearance = appearance || defaultAppearance;
+                const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+                if (resolvedAppearance === 'dark' || (resolvedAppearance === 'system' && prefersDark)) {
+                    document.documentElement.classList.add('dark');
+                    document.documentElement.style.colorScheme = 'dark';
+                } else {
+                    document.documentElement.classList.remove('dark');
+                    document.documentElement.style.colorScheme = 'light';
                 }
             })();
         </script>
