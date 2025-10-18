@@ -1,14 +1,16 @@
 import ApplicationSettingController from '@/actions/App/Http/Controllers/Admin/ApplicationSettingController';
+import DebugModeController from '@/actions/App/Http/Controllers/Admin/DebugModeController';
 import Heading from '@/components/heading';
 import HeadingSmall from '@/components/heading-small';
 import InputError from '@/components/input-error';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem, type SharedData } from '@/types';
-import { Head, usePage } from '@inertiajs/react';
+import { Head, Link, usePage } from '@inertiajs/react';
 import { Monitor, Moon, Sun } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -17,6 +19,7 @@ type AppearanceOption = 'light' | 'dark' | 'system';
 
 type AdminSettingsProps = {
   appName: string;
+  appDebug: boolean;
   allowRegistration: boolean;
   allowAppearanceCustomization: boolean;
   allowTwoFactorAuthentication: boolean;
@@ -30,6 +33,7 @@ type AdminPageProps = SharedData & {
 
 export default function AdminSettingsIndex({
   appName,
+  appDebug,
   allowRegistration: initialAllowRegistration,
   allowAppearanceCustomization: initialAllowAppearanceCustomization,
   allowTwoFactorAuthentication: initialAllowTwoFactorAuthentication,
@@ -259,6 +263,25 @@ export default function AdminSettingsIndex({
                   <InputError className="mt-1" message={getError('timezone')} />
                 </div>
               )}
+
+              <div className="space-y-2">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <p className="text-sm font-medium text-foreground">
+                    {t('admin.settings.app_debug_label')}
+                  </p>
+                  <Badge variant={appDebug ? 'default' : 'secondary'}>
+                    {appDebug ? t('common.enabled') : t('common.disabled')}
+                  </Badge>
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  {t('admin.settings.app_debug_description')}
+                </p>
+                <Button asChild variant="outline" size="sm">
+                  <Link href={DebugModeController.edit.url()}>
+                    {t('admin.settings.debug_mode_manage_button')}
+                  </Link>
+                </Button>
+              </div>
             </section>
 
             <hr className="border-border" />

@@ -22,6 +22,7 @@ class ApplicationSettingController extends Controller
             'allowAppearanceCustomization' => config('app.allow_appearance_customization'),
             'allowTwoFactorAuthentication' => config('app.allow_two_factor_authentication'),
             'defaultAppearance' => config('app.default_appearance', 'light'),
+            'appDebug' => config('app.debug'),
         ]);
     }
 

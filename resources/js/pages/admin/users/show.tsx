@@ -4,6 +4,7 @@ import Heading from '@/components/heading';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useDateFormatter } from '@/hooks/use-date-formatter';
+import { useRelativeTimeFormatter } from '@/hooks/use-relative-time';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link } from '@inertiajs/react';
@@ -18,6 +19,7 @@ type UserDetail = {
   created_at?: string | null;
   updated_at?: string | null;
   deleted_at?: string | null;
+  last_login_at?: string | null;
 };
 
 export default function ShowUser({
@@ -29,6 +31,7 @@ export default function ShowUser({
 }) {
   const { t } = useTranslation();
   const formatDateTime = useDateFormatter();
+  const formatRelativeTime = useRelativeTimeFormatter();
 
   const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -61,6 +64,12 @@ export default function ShowUser({
             <Button asChild>
               <Link href={AdminUserController.edit.url(user.id)}>
                 {t('admin.users.show.edit')}
+              </Link>
+            </Button>
+
+            <Button asChild variant="secondary">
+              <Link href={AdminUserController.activity.url(user.id)}>
+                {t('admin.users.show.activity_link')}
               </Link>
             </Button>
 
@@ -126,6 +135,25 @@ export default function ShowUser({
             <div className="grid gap-4">
               <div>
                 <p className="text-xs text-muted-foreground uppercase">
+                  {t('admin.users.show.last_login_label')}
+                </p>
+                {user.last_login_at ? (
+                  <div className="flex flex-col gap-1">
+                    <span className="text-base text-foreground">
+                      {formatRelativeTime(user.last_login_at)}
+                    </span>
+                    <span className="text-sm text-muted-foreground">
+                      {formatDateTime(user.last_login_at)}
+                    </span>
+                  </div>
+                ) : (
+                  <p className="text-base text-muted-foreground">
+                    {t('admin.users.show.no_last_login')}
+                  </p>
+                )}
+              </div>
+              <div>
+                <p className="text-xs text-muted-foreground uppercase">
                   {t('admin.users.show.email_verification_label')}
                 </p>
                 <p className="text-base text-foreground">
@@ -167,6 +195,7 @@ export default function ShowUser({
             </div>
           </div>
         </div>
+
       </div>
     </AppLayout>
   );

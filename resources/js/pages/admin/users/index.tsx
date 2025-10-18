@@ -2,6 +2,8 @@ import AdminUserController from '@/actions/App/Http/Controllers/Admin/UserContro
 import AdminUserDeleteDialog from '@/components/admin/user-delete-dialog';
 import Heading from '@/components/heading';
 import { Button } from '@/components/ui/button';
+import { useDateFormatter } from '@/hooks/use-date-formatter';
+import { useRelativeTimeFormatter } from '@/hooks/use-relative-time';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem, type SharedData } from '@/types';
 import { Head, Link, usePage } from '@inertiajs/react';
@@ -14,6 +16,7 @@ type UserListItem = {
   email: string;
   roles: string[];
   deleted_at?: string | null;
+  last_login_at?: string | null;
 };
 
 type PaginationLink = {
@@ -29,6 +32,8 @@ type UsersResponse = {
 
 export default function UsersIndex({ users }: { users: UsersResponse }) {
   const { t } = useTranslation();
+  const formatDateTime = useDateFormatter();
+  const formatRelativeTime = useRelativeTimeFormatter();
   const breadcrumbs: BreadcrumbItem[] = [
     {
       title: t('admin.users.title'),
@@ -72,6 +77,9 @@ export default function UsersIndex({ users }: { users: UsersResponse }) {
                 <th className="px-4 py-3 text-left font-medium text-muted-foreground">
                   {t('common.roles')}
                 </th>
+                <th className="px-4 py-3 text-left font-medium text-muted-foreground">
+                  {t('common.last_login')}
+                </th>
                 <th className="px-4 py-3 text-right font-medium text-muted-foreground">
                   {t('common.actions')}
                 </th>
@@ -81,7 +89,7 @@ export default function UsersIndex({ users }: { users: UsersResponse }) {
               {users.data.length === 0 ? (
                 <tr>
                   <td
-                    colSpan={4}
+                    colSpan={5}
                     className="px-4 py-6 text-center text-sm text-muted-foreground"
                   >
                     {t('admin.users.no_users')}
@@ -98,6 +106,20 @@ export default function UsersIndex({ users }: { users: UsersResponse }) {
                     </td>
                     <td className="px-4 py-3 text-muted-foreground">
                       {user.roles.length > 0 ? user.roles.join(', ') : '—'}
+                    </td>
+                    <td className="px-4 py-3 text-muted-foreground">
+                      {user.last_login_at ? (
+                        <div className="flex flex-col">
+                          <span className="text-foreground">
+                            {formatRelativeTime(user.last_login_at)}
+                          </span>
+                          <span className="text-xs text-muted-foreground">
+                            {formatDateTime(user.last_login_at)}
+                          </span>
+                        </div>
+                      ) : (
+                        '—'
+                      )}
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex items-center justify-end gap-2">

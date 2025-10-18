@@ -9,11 +9,14 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Spatie\Permission\Traits\HasRoles;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Models\Activity;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, HasRoles, Notifiable, SoftDeletes, TwoFactorAuthenticatable;
+    use HasFactory, HasRoles, LogsActivity, Notifiable, SoftDeletes, TwoFactorAuthenticatable;
 
     /**
      * The attributes that are mass assignable.
@@ -45,7 +48,34 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
+            'last_login_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->useLogName('user')
+            ->logAll()
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs()
+            ->logExcept([
+                'password',
+                'remember_token',
+                'two_factor_secret',
+                'two_factor_recovery_codes',
+            ]);
+    }
+
+    public function tapActivity(Activity $activity, string $eventName): void
+    {
+        $activity->description = match ($eventName) {
+            'created' => __('activity.user.created', ['name' => $this->name]),
+            'updated' => __('activity.user.updated', ['name' => $this->name]),
+            'deleted' => __('activity.user.deleted', ['name' => $this->name]),
+            'restored' => __('activity.user.restored', ['name' => $this->name]),
+            default => __('activity.user.default', ['name' => $this->name]),
+        };
     }
 }

@@ -184,3 +184,45 @@ it('updates the two factor authentication flag', function () {
     expect(Setting::value('app.allow_two_factor_authentication'))->toBe('0')
         ->and(config('app.allow_two_factor_authentication'))->toBeFalse();
 });
+
+it('allows admins to view the debug mode settings page', function () {
+    Setting::updateValue('app.debug', '1');
+    config(['app.debug' => true]);
+    $admin = adminUser();
+
+    $this->actingAs($admin)
+        ->withSession(['auth.password_confirmed_at' => now()->timestamp])
+        ->get(route('admin.settings.debug.edit'))
+        ->assertOk()
+        ->assertInertia(fn (Assert $page) => $page
+            ->component('admin/settings/debug')
+            ->where('debugEnabled', true)
+        );
+});
+
+it('forbids non-admins from accessing the debug mode settings page', function () {
+    $user = regularUser();
+
+    $this->withoutMiddleware(ConfirmPassword::class)
+        ->actingAs($user)
+        ->get(route('admin.settings.debug.edit'))
+        ->assertForbidden();
+});
+
+it('updates the debug mode preference', function () {
+    Setting::updateValue('app.debug', '0');
+    config(['app.debug' => false]);
+    $admin = adminUser();
+
+    $this->from(route('admin.settings.debug.edit'))
+        ->actingAs($admin)
+        ->withSession(['auth.password_confirmed_at' => now()->timestamp])
+        ->put(route('admin.settings.debug.update'), [
+            'debug_enabled' => '1',
+        ])
+        ->assertRedirect(route('admin.settings.debug.edit'))
+        ->assertSessionHas('success', __('admin.settings.debug_mode_updated'));
+
+    expect(Setting::value('app.debug'))->toBe('1')
+        ->and(config('app.debug'))->toBeTrue();
+});

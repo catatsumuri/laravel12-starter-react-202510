@@ -35,6 +35,7 @@ class AppServiceProvider extends ServiceProvider
         }
 
         $this->syncBooleanSetting('app.allow_registration', 'app.allow_registration');
+        $this->syncDebugMode();
         $this->syncAppearanceCustomization();
         $this->syncTwoFactorAuthentication();
         $this->syncAppearanceSetting();
@@ -103,5 +104,16 @@ class AppServiceProvider extends ServiceProvider
             config(['app.locale' => $locale]);
             app()->setLocale($locale);
         }
+    }
+
+    protected function syncDebugMode(): void
+    {
+        $stored = Setting::value('app.debug');
+
+        if (is_null($stored)) {
+            return;
+        }
+
+        config(['app.debug' => filter_var($stored, FILTER_VALIDATE_BOOL)]);
     }
 }

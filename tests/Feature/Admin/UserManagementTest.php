@@ -2,6 +2,7 @@
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Spatie\Activitylog\Models\Activity;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\PermissionRegistrar;
 
@@ -90,4 +91,37 @@ it('soft deletes other users', function () {
         ->assertSessionHas('success', __('User deleted successfully.'));
 
     $this->assertSoftDeleted('users', ['id' => $user->id]);
+});
+
+it('records activity when an admin updates a user', function () {
+    $admin = createAdmin();
+    $user = createMember([
+        'name' => 'Original Member',
+        'email' => 'member@example.com',
+    ]);
+
+    $payload = [
+        'name' => 'Updated Member',
+        'email' => 'member@example.com',
+        'password' => null,
+        'password_confirmation' => null,
+        'role' => 'user',
+    ];
+
+    $this->actingAs($admin)
+        ->patch(route('admin.users.update', $user), $payload)
+        ->assertRedirect(route('admin.users.edit', $user));
+
+    $activity = Activity::query()
+        ->where('log_name', 'user')
+        ->where('subject_type', User::class)
+        ->where('subject_id', $user->id)
+        ->latest('id')
+        ->first();
+
+    expect($activity)->not->toBeNull()
+        ->and($activity->description)->toBe(__('activity.user.updated', ['name' => 'Updated Member']))
+        ->and($activity->causer_id)->toBe($admin->id)
+        ->and($activity->causer_type)->toBe(User::class)
+        ->and($activity->changes['attributes']['name'] ?? null)->toBe('Updated Member');
 });
