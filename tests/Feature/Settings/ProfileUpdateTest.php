@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Setting;
 use App\Models\User;
 
 test('profile page is displayed', function () {
@@ -53,6 +54,9 @@ test('email verification status is unchanged when the email address is unchanged
 test('user can delete their account', function () {
     $user = User::factory()->create();
 
+    Setting::updateValue('app.allow_account_deletion', '1');
+    config(['app.allow_account_deletion' => true]);
+
     $response = $this
         ->actingAs($user)
         ->delete(route('profile.destroy'), [
@@ -84,6 +88,26 @@ test('correct password must be provided to delete account', function () {
     $response
         ->assertSessionHasErrors('password')
         ->assertRedirect(route('profile.edit'));
+
+    $existingUser = User::withTrashed()->find($user->id);
+
+    expect($existingUser)->not->toBeNull()
+        ->and($existingUser->trashed())->toBeFalse();
+});
+
+test('user cannot delete account when the feature is disabled', function () {
+    $user = User::factory()->create();
+
+    Setting::updateValue('app.allow_account_deletion', '0');
+    config(['app.allow_account_deletion' => false]);
+
+    $response = $this
+        ->actingAs($user)
+        ->delete(route('profile.destroy'), [
+            'password' => 'password',
+        ]);
+
+    $response->assertForbidden();
 
     $existingUser = User::withTrashed()->find($user->id);
 

@@ -64,6 +64,7 @@ it('updates the application name', function () {
             'allow_registration' => true,
             'allow_appearance_customization' => true,
             'allow_two_factor_authentication' => true,
+            'allow_account_deletion' => true,
             'default_appearance' => 'light',
             'locale' => config('app.locale'),
             'timezone' => $currentTimezone,
@@ -89,6 +90,7 @@ it('updates the allow registration flag', function () {
             'allow_registration' => true,
             'allow_appearance_customization' => true,
             'allow_two_factor_authentication' => true,
+            'allow_account_deletion' => true,
             'default_appearance' => 'light',
             'locale' => config('app.locale'),
             'timezone' => $currentTimezone,
@@ -115,6 +117,7 @@ it('updates the timezone using the main settings form', function () {
                 'allow_registration' => true,
                 'allow_appearance_customization' => true,
                 'allow_two_factor_authentication' => true,
+                'allow_account_deletion' => true,
                 'default_appearance' => 'light',
                 'locale' => config('app.locale'),
                 'timezone' => 'UTC',
@@ -147,6 +150,7 @@ it('updates the appearance customization flag', function () {
             'allow_registration' => true,
             'allow_appearance_customization' => true,
             'allow_two_factor_authentication' => true,
+            'allow_account_deletion' => true,
             'default_appearance' => 'dark',
             'locale' => config('app.locale'),
             'timezone' => $currentTimezone,
@@ -174,6 +178,7 @@ it('updates the two factor authentication flag', function () {
             'allow_registration' => true,
             'allow_appearance_customization' => true,
             'allow_two_factor_authentication' => false,
+            'allow_account_deletion' => true,
             'default_appearance' => 'light',
             'locale' => config('app.locale'),
             'timezone' => $currentTimezone,
@@ -183,6 +188,32 @@ it('updates the two factor authentication flag', function () {
 
     expect(Setting::value('app.allow_two_factor_authentication'))->toBe('0')
         ->and(config('app.allow_two_factor_authentication'))->toBeFalse();
+});
+
+it('updates the account deletion flag', function () {
+    Setting::updateValue('app.allow_account_deletion', '1');
+    config(['app.allow_account_deletion' => true]);
+    $currentTimezone = config('app.timezone');
+
+    $admin = adminUser();
+
+    $this->from(route('admin.settings.edit'))
+        ->actingAs($admin)
+        ->put(route('admin.settings.update'), [
+            'app_name' => 'Custom Admin Portal',
+            'allow_registration' => true,
+            'allow_appearance_customization' => true,
+            'allow_two_factor_authentication' => true,
+            'allow_account_deletion' => false,
+            'default_appearance' => 'light',
+            'locale' => config('app.locale'),
+            'timezone' => $currentTimezone,
+        ])
+        ->assertRedirect(route('admin.settings.edit'))
+        ->assertSessionHas('success', __('admin.settings.application_updated'));
+
+    expect(Setting::value('app.allow_account_deletion'))->toBe('0')
+        ->and(config('app.allow_account_deletion'))->toBeFalse();
 });
 
 it('allows admins to view the debug mode settings page', function () {

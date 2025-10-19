@@ -78,9 +78,7 @@ export default function UserActivity({
 
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
-      <Head
-        title={t('admin.users.activity.head_title', { name: user.name })}
-      />
+      <Head title={t('admin.users.activity.head_title', { name: user.name })} />
 
       <div className="flex h-full flex-1 flex-col gap-6 overflow-x-auto rounded-xl p-6">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -120,7 +118,9 @@ export default function UserActivity({
                           {activity.description}
                         </p>
                         <p className="text-sm text-muted-foreground">
-                          {t('admin.users.activity.causer', { name: causerName })}
+                          {t('admin.users.activity.causer', {
+                            name: causerName,
+                          })}
                         </p>
                       </div>
                       <div className="text-sm text-muted-foreground sm:text-right">
@@ -135,7 +135,7 @@ export default function UserActivity({
                       <div className="grid gap-4 sm:grid-cols-2">
                         {hasOldValues && (
                           <div className="space-y-2">
-                            <p className="text-xs font-semibold uppercase text-muted-foreground">
+                            <p className="text-xs font-semibold text-muted-foreground uppercase">
                               {t('admin.users.activity.changes_old')}
                             </p>
                             {renderChanges(activity.changes?.old)}
@@ -144,7 +144,7 @@ export default function UserActivity({
 
                         {hasNewValues && (
                           <div className="space-y-2">
-                            <p className="text-xs font-semibold uppercase text-muted-foreground">
+                            <p className="text-xs font-semibold text-muted-foreground uppercase">
                               {t('admin.users.activity.changes_new')}
                             </p>
                             {renderChanges(activity.changes?.attributes)}

@@ -35,6 +35,7 @@ class AppServiceProvider extends ServiceProvider
         }
 
         $this->syncBooleanSetting('app.allow_registration', 'app.allow_registration');
+        $this->syncBooleanSetting('app.allow_account_deletion', 'app.allow_account_deletion');
         $this->syncDebugMode();
         $this->syncAppearanceCustomization();
         $this->syncTwoFactorAuthentication();

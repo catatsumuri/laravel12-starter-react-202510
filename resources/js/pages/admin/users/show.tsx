@@ -195,7 +195,6 @@ export default function ShowUser({
             </div>
           </div>
         </div>
-
       </div>
     </AppLayout>
   );

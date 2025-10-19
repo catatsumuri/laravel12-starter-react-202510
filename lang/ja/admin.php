@@ -41,6 +41,8 @@ return [
         'section_security_description' => '二要素認証の利用可否など、セキュリティに関する既定値を管理します。',
         'allow_two_factor_label' => 'ユーザーによる二要素認証の有効化を許可する',
         'allow_two_factor_description' => '無効にすると、設定画面から二要素認証が隠され、ログイン時のTOTP認証もスキップされます。',
+        'allow_account_deletion_label' => 'ユーザー自身によるアカウント削除を許可する',
+        'allow_account_deletion_description' => '無効にすると削除用のUIが非表示になり、削除リクエストも拒否されます。',
     ],
     'notifications' => [
         'new_user_registered' => [

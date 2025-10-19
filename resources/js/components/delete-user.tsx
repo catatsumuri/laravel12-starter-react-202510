@@ -13,13 +13,24 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Form } from '@inertiajs/react';
+import { type SharedData } from '@/types';
+import { Form, usePage } from '@inertiajs/react';
 import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
 export default function DeleteUser() {
   const passwordInput = useRef<HTMLInputElement>(null);
   const { t } = useTranslation();
+  const { allowAccountDeletion, settingsNavigation } =
+    usePage<SharedData>().props;
+
+  const featureEnabled =
+    (settingsNavigation?.deleteAccount ?? true) &&
+    (allowAccountDeletion ?? true);
+
+  if (!featureEnabled) {
+    return null;
+  }
 
   return (
     <div className="space-y-6">

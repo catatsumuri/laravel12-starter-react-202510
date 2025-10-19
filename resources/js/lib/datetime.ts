@@ -56,7 +56,9 @@ export const formatRelativeTimeString = (
   }
 
   const intlLocale = toLocaleTag(locale);
-  const formatter = new Intl.RelativeTimeFormat(intlLocale, { numeric: 'auto' });
+  const formatter = new Intl.RelativeTimeFormat(intlLocale, {
+    numeric: 'auto',
+  });
   const now = new Date();
   const diffInSeconds = Math.round((target.getTime() - now.getTime()) / 1000);
 

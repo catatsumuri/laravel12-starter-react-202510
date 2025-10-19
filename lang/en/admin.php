@@ -41,6 +41,8 @@ return [
         'section_security_description' => 'Control two-factor authentication availability and related security defaults.',
         'allow_two_factor_label' => 'Allow users to enable two-factor authentication',
         'allow_two_factor_description' => 'When disabled, the two-factor settings page is hidden and logins skip TOTP challenges.',
+        'allow_account_deletion_label' => 'Allow users to delete their own accounts',
+        'allow_account_deletion_description' => 'When disabled, the delete-account UI is hidden and account removal requests are rejected.',
     ],
     'notifications' => [
         'new_user_registered' => [

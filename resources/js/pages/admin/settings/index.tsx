@@ -11,7 +11,7 @@ import { Label } from '@/components/ui/label';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem, type SharedData } from '@/types';
 import { Head, Link, usePage } from '@inertiajs/react';
-import { Monitor, Moon, Sun } from 'lucide-react';
+import { Monitor, Moon, Settings2, Sun } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -23,6 +23,7 @@ type AdminSettingsProps = {
   allowRegistration: boolean;
   allowAppearanceCustomization: boolean;
   allowTwoFactorAuthentication: boolean;
+  allowAccountDeletion: boolean;
   defaultAppearance: AppearanceOption;
 };
 
@@ -37,6 +38,7 @@ export default function AdminSettingsIndex({
   allowRegistration: initialAllowRegistration,
   allowAppearanceCustomization: initialAllowAppearanceCustomization,
   allowTwoFactorAuthentication: initialAllowTwoFactorAuthentication,
+  allowAccountDeletion: initialAllowAccountDeletion,
   defaultAppearance: initialDefaultAppearance,
 }: AdminSettingsProps) {
   const { t } = useTranslation();
@@ -49,6 +51,7 @@ export default function AdminSettingsIndex({
     allowRegistration: sharedAllowRegistration,
     allowAppearanceCustomization: sharedAllowAppearanceCustomization,
     allowTwoFactorAuthentication: sharedAllowTwoFactorAuthentication,
+    allowAccountDeletion: sharedAllowAccountDeletion,
     defaultAppearance: sharedDefaultAppearance,
     errors: pageErrors = {},
   } = usePage<AdminPageProps>().props;
@@ -76,6 +79,13 @@ export default function AdminSettingsIndex({
       : initialAllowTwoFactorAuthentication;
   const [allowTwoFactorAuthentication, setAllowTwoFactorAuthentication] =
     useState(derivedAllowTwoFactorAuthentication);
+  const derivedAllowAccountDeletion =
+    typeof sharedAllowAccountDeletion === 'boolean'
+      ? sharedAllowAccountDeletion
+      : initialAllowAccountDeletion;
+  const [allowAccountDeletion, setAllowAccountDeletion] = useState(
+    derivedAllowAccountDeletion,
+  );
   const derivedDefaultAppearance =
     typeof sharedDefaultAppearance === 'string' &&
     ['light', 'dark', 'system'].includes(sharedDefaultAppearance)
@@ -106,6 +116,10 @@ export default function AdminSettingsIndex({
   }, [derivedAllowTwoFactorAuthentication]);
 
   useEffect(() => {
+    setAllowAccountDeletion(derivedAllowAccountDeletion);
+  }, [derivedAllowAccountDeletion]);
+
+  useEffect(() => {
     setDefaultAppearance(derivedDefaultAppearance);
   }, [derivedDefaultAppearance]);
 
@@ -125,6 +139,28 @@ export default function AdminSettingsIndex({
         value: 'system' as AppearanceOption,
         icon: Monitor,
         label: t('admin.settings.default_appearance_system'),
+      },
+    ],
+    [t],
+  );
+
+  const sectionAnchors = useMemo(
+    () => [
+      {
+        id: 'general-settings',
+        label: t('admin.settings.section_general_title'),
+      },
+      {
+        id: 'access-settings',
+        label: t('admin.settings.section_access_title'),
+      },
+      {
+        id: 'appearance-settings',
+        label: t('admin.settings.section_appearance_title'),
+      },
+      {
+        id: 'security-settings',
+        label: t('admin.settings.section_security_title'),
       },
     ],
     [t],
@@ -160,6 +196,21 @@ export default function AdminSettingsIndex({
             description={t('admin.settings.description')}
           />
 
+          <nav aria-label={t('admin.settings.title')} className="text-sm">
+            <ul className="flex flex-wrap gap-2">
+              {sectionAnchors.map(({ id, label }) => (
+                <li key={id}>
+                  <a
+                    className="rounded-md border border-border bg-muted px-3 py-1 text-muted-foreground transition hover:bg-background hover:text-foreground"
+                    href={`#${id}`}
+                  >
+                    {label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+
           <form
             action={ApplicationSettingController.update.url()}
             method="post"
@@ -184,11 +235,16 @@ export default function AdminSettingsIndex({
             />
             <input
               type="hidden"
+              name="allow_account_deletion"
+              value={allowAccountDeletion ? '1' : '0'}
+            />
+            <input
+              type="hidden"
               name="default_appearance"
               value={defaultAppearance}
             />
 
-            <section className="space-y-4">
+            <section id="general-settings" className="space-y-4">
               <HeadingSmall
                 title={t('admin.settings.section_general_title')}
                 description={t('admin.settings.section_general_description')}
@@ -276,8 +332,12 @@ export default function AdminSettingsIndex({
                 <p className="text-sm text-muted-foreground">
                   {t('admin.settings.app_debug_description')}
                 </p>
-                <Button asChild variant="outline" size="sm">
-                  <Link href={DebugModeController.edit.url()}>
+                <Button asChild variant="default" size="sm">
+                  <Link
+                    href={DebugModeController.edit.url()}
+                    className="inline-flex items-center gap-2"
+                  >
+                    <Settings2 className="h-4 w-4" />
                     {t('admin.settings.debug_mode_manage_button')}
                   </Link>
                 </Button>
@@ -286,7 +346,7 @@ export default function AdminSettingsIndex({
 
             <hr className="border-border" />
 
-            <section className="space-y-4">
+            <section id="access-settings" className="space-y-4">
               <HeadingSmall
                 title={t('admin.settings.section_access_title')}
                 description={t('admin.settings.section_access_description')}
@@ -320,7 +380,7 @@ export default function AdminSettingsIndex({
 
             <hr className="border-border" />
 
-            <section className="space-y-4">
+            <section id="appearance-settings" className="space-y-4">
               <HeadingSmall
                 title={t('admin.settings.section_appearance_title')}
                 description={t('admin.settings.section_appearance_description')}
@@ -384,7 +444,7 @@ export default function AdminSettingsIndex({
 
             <hr className="border-border" />
 
-            <section className="space-y-4">
+            <section id="security-settings" className="space-y-4">
               <HeadingSmall
                 title={t('admin.settings.section_security_title')}
                 description={t('admin.settings.section_security_description')}
@@ -412,6 +472,31 @@ export default function AdminSettingsIndex({
                 <InputError
                   className="mt-1"
                   message={getError('allow_two_factor_authentication')}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <div className="flex items-center gap-3">
+                  <Checkbox
+                    id="allow_account_deletion"
+                    checked={allowAccountDeletion}
+                    onCheckedChange={(checked) =>
+                      setAllowAccountDeletion(checked === true)
+                    }
+                  />
+                  <Label
+                    htmlFor="allow_account_deletion"
+                    className="text-sm text-foreground"
+                  >
+                    {t('admin.settings.allow_account_deletion_label')}
+                  </Label>
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  {t('admin.settings.allow_account_deletion_description')}
+                </p>
+                <InputError
+                  className="mt-1"
+                  message={getError('allow_account_deletion')}
                 />
               </div>
             </section>

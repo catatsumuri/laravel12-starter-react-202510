@@ -21,6 +21,7 @@ class ApplicationSettingController extends Controller
             'allowRegistration' => config('app.allow_registration'),
             'allowAppearanceCustomization' => config('app.allow_appearance_customization'),
             'allowTwoFactorAuthentication' => config('app.allow_two_factor_authentication'),
+            'allowAccountDeletion' => config('app.allow_account_deletion'),
             'defaultAppearance' => config('app.default_appearance', 'light'),
             'appDebug' => config('app.debug'),
         ]);
@@ -36,6 +37,7 @@ class ApplicationSettingController extends Controller
             'allow_registration' => ['nullable', 'boolean'],
             'allow_appearance_customization' => ['nullable', 'boolean'],
             'allow_two_factor_authentication' => ['nullable', 'boolean'],
+            'allow_account_deletion' => ['nullable', 'boolean'],
             'locale' => ['required', 'string', Rule::in($availableLocales)],
             'default_appearance' => ['required', 'string', Rule::in(['light', 'dark', 'system'])],
             'timezone' => [
@@ -50,8 +52,10 @@ class ApplicationSettingController extends Controller
         $allowRegistration = $request->boolean('allow_registration');
         $allowAppearanceCustomization = $request->boolean('allow_appearance_customization');
         $allowTwoFactorAuthentication = $request->boolean('allow_two_factor_authentication');
+        $allowAccountDeletion = $request->boolean('allow_account_deletion');
         Setting::updateValue('app.allow_appearance_customization', $allowAppearanceCustomization ? '1' : '0');
         Setting::updateValue('app.allow_two_factor_authentication', $allowTwoFactorAuthentication ? '1' : '0');
+        Setting::updateValue('app.allow_account_deletion', $allowAccountDeletion ? '1' : '0');
         $defaultAppearance = $validated['default_appearance'];
         $locale = $validated['locale'];
         $timezone = $validated['timezone'] ?? null;
@@ -64,6 +68,7 @@ class ApplicationSettingController extends Controller
         config(['app.allow_registration' => $allowRegistration]);
         config(['app.allow_appearance_customization' => $allowAppearanceCustomization]);
         config(['app.allow_two_factor_authentication' => $allowTwoFactorAuthentication]);
+        config(['app.allow_account_deletion' => $allowAccountDeletion]);
         config(['app.default_appearance' => $defaultAppearance]);
 
         app()->setLocale($locale);

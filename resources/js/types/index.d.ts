@@ -44,11 +44,13 @@ export interface SharedData {
   allowRegistration?: boolean;
   allowAppearanceCustomization?: boolean;
   allowTwoFactorAuthentication?: boolean;
+  allowAccountDeletion?: boolean;
   settingsNavigation?: {
     profile?: boolean;
     password?: boolean;
     twoFactor?: boolean;
     appearance?: boolean;
+    deleteAccount?: boolean;
     [key: string]: unknown;
   };
   defaultAppearance?: 'light' | 'dark' | 'system';
