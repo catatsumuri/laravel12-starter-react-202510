@@ -45,6 +45,20 @@ export interface SharedData {
   allowAppearanceCustomization?: boolean;
   allowTwoFactorAuthentication?: boolean;
   allowAccountDeletion?: boolean;
+  logChannel?: string | null;
+  logLevel?: string | null;
+  logStackChannels?: string | string[] | null;
+  logSlackWebhookUrl?: string | null;
+  logSlackUsername?: string | null;
+  logSlackEmoji?: string | null;
+  mailMailer?: string | null;
+  mailScheme?: string | null;
+  mailHost?: string | null;
+  mailPort?: string | null;
+  mailUsername?: string | null;
+  mailPassword?: string | null;
+  mailFromAddress?: string | null;
+  mailFromName?: string | null;
   settingsNavigation?: {
     profile?: boolean;
     password?: boolean;
