@@ -104,4 +104,15 @@ return [
             'message' => ':name has created an account.',
         ],
     ],
+    'users' => [
+        'title' => 'User Management',
+        'description' => 'View and manage all users.',
+        'loading_more' => 'Loading...',
+        'end_of_list' => 'All users loaded.',
+        'no_users' => 'No users found.',
+        'new_user' => 'New User',
+        'view' => 'View',
+        'edit' => 'Edit',
+        'last_login' => 'Last Login',
+    ],
 ];

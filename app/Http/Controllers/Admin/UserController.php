@@ -22,9 +22,9 @@ class UserController extends Controller
      */
     public function index(Request $request): Response
     {
-        $users = User::query()
+        $users = Inertia::scroll(fn () => User::query()
             ->with('roles:id,name')
-            ->latest('id')
+            ->oldest('id')
             ->paginate(10)
             ->through(fn (User $user) => [
                 'id' => $user->id,
@@ -34,7 +34,7 @@ class UserController extends Controller
                 'deleted_at' => $user->deleted_at,
                 'last_login_at' => optional($user->last_login_at)?->toIso8601String(),
             ])
-            ->withQueryString();
+        );
 
         return Inertia::render('admin/users/index', [
             'users' => $users,
