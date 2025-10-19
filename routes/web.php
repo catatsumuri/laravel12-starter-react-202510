@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\ApplicationSettingController;
+use App\Http\Controllers\Admin\DebugModeController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\NotificationController;
 use Illuminate\Support\Facades\Route;
@@ -33,7 +34,13 @@ Route::middleware(['auth', 'verified', 'admin'])
             ->name('settings.update');
         Route::post('settings/timezone', [ApplicationSettingController::class, 'updateTimezone'])
             ->name('settings.timezone');
+        Route::get('settings/debug', [DebugModeController::class, 'edit'])
+            ->name('settings.debug.edit');
+        Route::put('settings/debug', [DebugModeController::class, 'update'])
+            ->name('settings.debug.update');
 
+        Route::get('users/{user}/activity', [UserController::class, 'activity'])
+            ->name('users.activity');
         Route::resource('users', UserController::class);
     });
 

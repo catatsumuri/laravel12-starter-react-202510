@@ -54,6 +54,7 @@ class HandleInertiaRequests extends Middleware
         $twoFactorSetting = (bool) config('app.allow_two_factor_authentication', true);
         $twoFactorFeatureEnabled = Features::canManageTwoFactorAuthentication();
         $allowTwoFactor = $twoFactorSetting && $twoFactorFeatureEnabled;
+        $allowAccountDeletion = (bool) config('app.allow_account_deletion', true);
 
         return [
             ...parent::share($request),
@@ -66,11 +67,13 @@ class HandleInertiaRequests extends Middleware
             'allowRegistration' => config('app.allow_registration'),
             'allowAppearanceCustomization' => $allowAppearance,
             'allowTwoFactorAuthentication' => $allowTwoFactor,
+            'allowAccountDeletion' => $allowAccountDeletion,
             'settingsNavigation' => [
                 'profile' => true,
                 'password' => true,
                 'twoFactor' => $allowTwoFactor,
                 'appearance' => $allowAppearance,
+                'deleteAccount' => $allowAccountDeletion,
             ],
             'defaultAppearance' => config('app.default_appearance', 'light'),
             'translations' => $this->frontendTranslations($locale),

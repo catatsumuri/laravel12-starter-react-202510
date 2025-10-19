@@ -9,7 +9,8 @@ import AuthLayout from '@/layouts/auth-layout';
 import { register } from '@/routes';
 import { request } from '@/routes/password';
 import { Form, Head, usePage } from '@inertiajs/react';
-import { LoaderCircle } from 'lucide-react';
+import { Eye, EyeOff, LoaderCircle } from 'lucide-react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface LoginProps {
@@ -21,6 +22,7 @@ export default function Login({ status, canResetPassword }: LoginProps) {
   const allowRegistration =
     usePage<{ allowRegistration?: boolean }>().props.allowRegistration ?? false;
   const { t } = useTranslation();
+  const [showPassword, setShowPassword] = useState(false);
 
   return (
     <AuthLayout
@@ -65,15 +67,35 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                     </TextLink>
                   )}
                 </div>
-                <Input
-                  id="password"
-                  type="password"
-                  name="password"
-                  required
-                  tabIndex={2}
-                  autoComplete="current-password"
-                  placeholder={t('common.password_placeholder')}
-                />
+                <div className="relative">
+                  <Input
+                    id="password"
+                    type={showPassword ? 'text' : 'password'}
+                    name="password"
+                    required
+                    tabIndex={2}
+                    autoComplete="current-password"
+                    placeholder={t('common.password_placeholder')}
+                    className="pr-10"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((value) => !value)}
+                    className="absolute inset-y-0 right-2 flex items-center text-muted-foreground transition hover:text-foreground"
+                    aria-label={
+                      showPassword
+                        ? t('auth.login.password_hide')
+                        : t('auth.login.password_show')
+                    }
+                    tabIndex={6}
+                  >
+                    {showPassword ? (
+                      <EyeOff className="h-4 w-4" />
+                    ) : (
+                      <Eye className="h-4 w-4" />
+                    )}
+                  </button>
+                </div>
                 <InputError message={errors.password} />
               </div>
 

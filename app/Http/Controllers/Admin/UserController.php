@@ -6,11 +6,13 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules;
 use Inertia\Inertia;
 use Inertia\Response;
+use Spatie\Activitylog\Models\Activity;
 use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
@@ -30,6 +32,7 @@ class UserController extends Controller
                 'email' => $user->email,
                 'roles' => $user->roles->pluck('name')->all(),
                 'deleted_at' => $user->deleted_at,
+                'last_login_at' => optional($user->last_login_at)?->toIso8601String(),
             ])
             ->withQueryString();
 
@@ -72,8 +75,43 @@ class UserController extends Controller
                 'created_at' => optional($user->created_at)?->toIso8601String(),
                 'updated_at' => optional($user->updated_at)?->toIso8601String(),
                 'deleted_at' => optional($user->deleted_at)?->toIso8601String(),
+                'last_login_at' => optional($user->last_login_at)?->toIso8601String(),
             ],
             'canDelete' => auth()->id() !== $user->id,
+        ]);
+    }
+
+    public function activity(User $user): Response
+    {
+        $activities = Activity::query()
+            ->where('subject_type', $user->getMorphClass())
+            ->where('subject_id', $user->getKey())
+            ->with('causer:id,name')
+            ->latest()
+            ->paginate(15)
+            ->through(fn (Activity $activity) => [
+                'id' => $activity->id,
+                'description' => $activity->description,
+                'causer' => $activity->causer
+                    ? [
+                        'id' => $activity->causer->id,
+                        'name' => $activity->causer->name,
+                    ]
+                    : null,
+                'changes' => [
+                    'attributes' => Arr::get($activity->changes(), 'attributes', []),
+                    'old' => Arr::get($activity->changes(), 'old', []),
+                ],
+                'created_at' => optional($activity->created_at)?->toIso8601String(),
+            ])
+            ->withQueryString();
+
+        return Inertia::render('admin/users/activity', [
+            'user' => [
+                'id' => $user->id,
+                'name' => $user->name,
+            ],
+            'activities' => $activities,
         ]);
     }
 

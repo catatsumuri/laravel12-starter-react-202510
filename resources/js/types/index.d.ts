@@ -44,11 +44,27 @@ export interface SharedData {
   allowRegistration?: boolean;
   allowAppearanceCustomization?: boolean;
   allowTwoFactorAuthentication?: boolean;
+  allowAccountDeletion?: boolean;
+  logChannel?: string | null;
+  logLevel?: string | null;
+  logStackChannels?: string | string[] | null;
+  logSlackWebhookUrl?: string | null;
+  logSlackUsername?: string | null;
+  logSlackEmoji?: string | null;
+  mailMailer?: string | null;
+  mailScheme?: string | null;
+  mailHost?: string | null;
+  mailPort?: string | null;
+  mailUsername?: string | null;
+  mailPassword?: string | null;
+  mailFromAddress?: string | null;
+  mailFromName?: string | null;
   settingsNavigation?: {
     profile?: boolean;
     password?: boolean;
     twoFactor?: boolean;
     appearance?: boolean;
+    deleteAccount?: boolean;
     [key: string]: unknown;
   };
   defaultAppearance?: 'light' | 'dark' | 'system';
@@ -71,6 +87,7 @@ export interface User {
   email_verified_at: string | null;
   roles?: Array<string | { id: number; name: string }>;
   two_factor_enabled?: boolean;
+  last_login_at?: string | null;
   created_at: string;
   updated_at: string;
   [key: string]: unknown; // This allows for additional properties...

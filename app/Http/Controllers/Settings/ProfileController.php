@@ -18,9 +18,19 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): Response
     {
+        $avatarMedia = $request->user()->getFirstMedia('avatar');
+        $currentAvatarUrl = $avatarMedia
+            ? route('profile.avatar.show', [
+                'media' => $avatarMedia->getKey(),
+                'v' => $avatarMedia->updated_at?->timestamp ?? time(),
+            ])
+            : null;
+
         return Inertia::render('settings/profile', [
             'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
             'status' => $request->session()->get('status'),
+            'avatar' => $currentAvatarUrl,
+            'canDeleteAccount' => config('app.allow_account_deletion', true),
         ]);
     }
 
@@ -46,6 +56,10 @@ class ProfileController extends Controller
      */
     public function destroy(Request $request): RedirectResponse
     {
+        if (! config('app.allow_account_deletion', true)) {
+            abort(403);
+        }
+
         $request->validate([
             'password' => ['required', 'current_password'],
         ]);
